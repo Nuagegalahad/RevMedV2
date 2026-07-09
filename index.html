@@ -14,8 +14,11 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+  <!-- ============================================================== -->
+  <!-- STYLES                                                          -->
+  <!-- ============================================================== -->
   <style>
-    /* ===== STYLES COMPLETS (inchangés) ===== */
+    /* ===== RESET & VARIABLES ===== */
     :root {
       --cream: #FFF8F0;
       --coral: #E05A5A;
@@ -59,8 +62,7 @@
       content: "";
       position: fixed;
       inset: 0;
-      background-image:
-        linear-gradient(rgba(200, 180, 160, 0.05) 1px, transparent 1px),
+      background-image: linear-gradient(rgba(200, 180, 160, 0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(200, 180, 160, 0.05) 1px, transparent 1px);
       background-size: 24px 24px;
       pointer-events: none;
@@ -75,7 +77,52 @@
       padding: 0 4px;
     }
 
-    /* ===== MESSAGE QUOTIDIEN ===== */
+    /* ===== HEADER ===== */
+    .header {
+      background: linear-gradient(145deg, var(--navy), var(--navy2));
+      padding: 18px 14px 16px;
+      text-align: center;
+      border-radius: 0 0 28px 28px;
+      margin: -12px -10px 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(212, 120, 138, 0.2);
+    }
+
+    .header::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: repeating-linear-gradient(90deg,
+          var(--coral) 0px, var(--coral) 10px,
+          transparent 10px, transparent 20px);
+      opacity: 0.4;
+    }
+
+    .header h1 {
+      font-weight: 800;
+      color: white;
+      font-size: 1.9rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+      margin-bottom: 2px;
+      word-break: break-word;
+    }
+
+    .header-sub {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    /* ===== DAILY MESSAGE ===== */
     .daily-message {
       background: var(--card-bg);
       border: 1.5px solid var(--border);
@@ -103,66 +150,7 @@
       word-break: break-word;
     }
 
-    @media (max-width: 480px) {
-      .daily-message {
-        padding: 12px 10px;
-        gap: 8px;
-      }
-      .daily-message-icon {
-        font-size: 1.4rem;
-      }
-      .daily-message p {
-        font-size: 0.85rem;
-      }
-    }
-
-    /* ----- le reste du CSS est inchangé ----- */
-    .header {
-      background: linear-gradient(145deg, var(--navy), var(--navy2));
-      padding: 18px 14px 16px;
-      text-align: center;
-      border-radius: 0 0 28px 28px;
-      margin: -12px -10px 16px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(212, 120, 138, 0.2);
-    }
-
-    .header::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: repeating-linear-gradient(
-        90deg,
-        var(--coral) 0px, var(--coral) 10px,
-        transparent 10px, transparent 20px
-      );
-      opacity: 0.4;
-    }
-
-    .header h1 {
-      font-weight: 800;
-      color: white;
-      font-size: 1.9rem;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-      margin-bottom: 2px;
-      word-break: break-word;
-    }
-
-    .header-sub {
-      color: rgba(255, 255, 255, 0.75);
-      font-size: 0.8rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      font-weight: 600;
-      word-break: break-word;
-    }
-
+    /* ===== STATS ===== */
     .stats-row {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -191,9 +179,15 @@
       margin-bottom: 1px;
     }
 
-    .stat-card.total .stat-num { color: var(--navy); }
-    .stat-card.done .stat-num { color: var(--green); }
-    .stat-card.left .stat-num { color: var(--coral); }
+    .stat-card.total .stat-num {
+      color: var(--navy);
+    }
+    .stat-card.done .stat-num {
+      color: var(--green);
+    }
+    .stat-card.left .stat-num {
+      color: var(--coral);
+    }
 
     .stat-label {
       font-size: 0.7rem;
@@ -205,6 +199,7 @@
       word-break: break-word;
     }
 
+    /* ===== DEATH CARD (TIMELINE) ===== */
     .death-card {
       background: var(--card-bg);
       border-radius: var(--radius);
@@ -291,26 +286,54 @@
     }
 
     @keyframes move-arm {
-      0% { transform: rotate(0); }
-      5% { transform: rotate(0); }
-      9% { transform: rotate(40deg); }
-      80% { transform: rotate(0); }
+      0% {
+        transform: rotate(0);
+      }
+      5% {
+        transform: rotate(0);
+      }
+      9% {
+        transform: rotate(40deg);
+      }
+      80% {
+        transform: rotate(0);
+      }
     }
 
     @keyframes move-tool {
-      0% { transform: rotate(0); }
-      5% { transform: rotate(0); }
-      9% { transform: rotate(50deg); }
-      80% { transform: rotate(0); }
+      0% {
+        transform: rotate(0);
+      }
+      5% {
+        transform: rotate(0);
+      }
+      9% {
+        transform: rotate(50deg);
+      }
+      80% {
+        transform: rotate(0);
+      }
     }
 
     @keyframes write {
-      0% { transform: translate(0,0) rotate(0deg) scale(1,1); }
-      16% { transform: translate(0px,0px) rotate(5deg) scale(0.8,1); }
-      32% { transform: translate(0px,0px) rotate(0deg) scale(1,1); }
-      48% { transform: translate(0px,0px) rotate(6deg) scale(0.8,1); }
-      65% { transform: translate(0px,0px) rotate(0deg) scale(1,1); }
-      83% { transform: translate(0px,0px) rotate(4deg) scale(0.8,1); }
+      0% {
+        transform: translate(0, 0) rotate(0deg) scale(1, 1);
+      }
+      16% {
+        transform: translate(0px, 0px) rotate(5deg) scale(0.8, 1);
+      }
+      32% {
+        transform: translate(0px, 0px) rotate(0deg) scale(1, 1);
+      }
+      48% {
+        transform: translate(0px, 0px) rotate(6deg) scale(0.8, 1);
+      }
+      65% {
+        transform: translate(0px, 0px) rotate(0deg) scale(1, 1);
+      }
+      83% {
+        transform: translate(0px, 0px) rotate(4deg) scale(0.8, 1);
+      }
     }
 
     .death-message {
@@ -330,9 +353,10 @@
       transition: opacity 0.5s;
       white-space: nowrap;
       border: 1px solid rgba(224, 90, 90, 0.3);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       z-index: 10;
     }
+
     .death-message.show {
       opacity: 1;
     }
@@ -356,15 +380,18 @@
       z-index: 20;
       line-height: 1.3;
     }
+
     .congrats-svg.show {
       display: block;
     }
+
     .congrats-svg .sub {
       font-size: 1rem;
       font-weight: 500;
       color: var(--muted);
     }
 
+    /* ===== DEATH TIMER ===== */
     .death-timer {
       background: var(--card-bg);
       padding: 10px 10px 14px;
@@ -435,17 +462,31 @@
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.4;
+      }
     }
 
     @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
-      100% { transform: translateX(0); }
+      0% {
+        transform: translateX(0);
+      }
+      25% {
+        transform: translateX(-4px);
+      }
+      75% {
+        transform: translateX(4px);
+      }
+      100% {
+        transform: translateX(0);
+      }
     }
 
+    /* ===== REWARDS ===== */
     .rewards-section {
       background: var(--card-bg);
       border: 1.5px solid var(--border);
@@ -576,30 +617,6 @@
       background: #e0e0e0;
     }
 
-    .rewards-legend {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px dashed var(--border);
-      font-size: 0.7rem;
-      color: var(--muted);
-      text-align: center;
-      line-height: 1.6;
-      word-break: break-word;
-    }
-
-    .rewards-legend strong {
-      color: var(--navy);
-    }
-
-    .rewards-legend span {
-      display: inline-block;
-      background: rgba(196, 96, 122, 0.06);
-      padding: 0 6px;
-      border-radius: 10px;
-      margin: 0 1px;
-      font-size: 0.7rem;
-    }
-
     .lost-message {
       background: rgba(224, 90, 90, 0.08);
       border: 1.5px solid var(--coral);
@@ -630,6 +647,7 @@
       display: block;
     }
 
+    /* ===== ADD CARDS ===== */
     .add-card {
       background: var(--card-bg);
       border: 1.5px solid var(--border);
@@ -765,6 +783,7 @@
       box-shadow: 0 2px 8px rgba(196, 96, 122, 0.1);
     }
 
+    /* ===== SEARCH & FILTERS ===== */
     .search-wrap {
       position: relative;
       margin-bottom: 10px;
@@ -838,6 +857,7 @@
       box-shadow: 0 4px 14px rgba(196, 96, 122, 0.15);
     }
 
+    /* ===== CHAPTER LIST ===== */
     .theme-section {
       margin-bottom: 16px;
     }
@@ -997,6 +1017,31 @@
       color: var(--green);
     }
 
+    /* ===== THEME LIST (inside manager) ===== */
+    .theme-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .theme-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .theme-list-name {
+      flex: 1;
+    }
+
+    .theme-list-actions .btn-icon {
+      width: 32px;
+      height: 32px;
+      font-size: 0.9rem;
+    }
+
+    /* ===== TOAST ===== */
     .toast {
       position: fixed;
       bottom: 20px;
@@ -1024,6 +1069,7 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    /* ===== PAYMENT ENGAGEMENT ===== */
     .payment-engagement {
       margin-top: 30px;
       padding: 16px 14px;
@@ -1061,27 +1107,22 @@
       font-size: 0.8rem;
     }
 
-    /* Styles pour la liste des thèmes */
-    .theme-list-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 8px;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.9rem;
-    }
-    .theme-list-item:last-child { border-bottom: none; }
-    .theme-list-name { flex: 1; }
-    .theme-list-actions .btn-icon { width: 32px; height: 32px; font-size: 0.9rem; }
-
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 480px) {
       :root {
         --font-base: 17px;
         --touch-size: 44px;
       }
-      .header h1 { font-size: 1.6rem; }
-      .stat-num { font-size: 1.8rem; }
-      .stat-label { font-size: 0.65rem; }
+
+      .header h1 {
+        font-size: 1.6rem;
+      }
+      .stat-num {
+        font-size: 1.8rem;
+      }
+      .stat-label {
+        font-size: 0.65rem;
+      }
 
       #deadline {
         height: 120px;
@@ -1115,17 +1156,42 @@
         font-size: 0.8rem;
       }
 
-      .reward-item { font-size: 0.85rem; }
-      .reward-amount { font-size: 0.85rem; }
-      .reward-desc { font-size: 0.7rem; }
-      .reward-badge { width: 28px; height: 28px; font-size: 0.85rem; }
-      .chapter-name { font-size: 0.85rem; }
-      .filter-tab { font-size: 0.7rem; padding: 6px 12px; }
-      .btn-add { font-size: 0.9rem; }
-      input[type="text"] { font-size: 0.9rem; padding: 10px 12px; }
-      .toast { font-size: 0.85rem; padding: 10px 16px; }
-      .rewards-legend span { font-size: 0.65rem; }
-      .payment-engagement { font-size: 0.75rem; padding: 12px 10px; }
+      .reward-item {
+        font-size: 0.85rem;
+      }
+      .reward-amount {
+        font-size: 0.85rem;
+      }
+      .reward-desc {
+        font-size: 0.7rem;
+      }
+      .reward-badge {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+      }
+      .chapter-name {
+        font-size: 0.85rem;
+      }
+      .filter-tab {
+        font-size: 0.7rem;
+        padding: 6px 12px;
+      }
+      .btn-add {
+        font-size: 0.9rem;
+      }
+      input[type="text"] {
+        font-size: 0.9rem;
+        padding: 10px 12px;
+      }
+      .toast {
+        font-size: 0.85rem;
+        padding: 10px 16px;
+      }
+      .payment-engagement {
+        font-size: 0.75rem;
+        padding: 12px 10px;
+      }
     }
 
     @media (max-width: 360px) {
@@ -1133,8 +1199,13 @@
         --font-base: 15px;
         --touch-size: 40px;
       }
-      .header h1 { font-size: 1.3rem; }
-      .stat-num { font-size: 1.5rem; }
+
+      .header h1 {
+        font-size: 1.3rem;
+      }
+      .stat-num {
+        font-size: 1.5rem;
+      }
 
       #deadline {
         height: 90px;
@@ -1168,445 +1239,480 @@
         font-size: 0.7rem;
       }
 
-      .chapter-item { padding: 6px 10px; gap: 8px; }
-      .custom-cb { width: 24px; height: 24px; min-width: 24px; min-height: 24px; }
-      .btn-icon { width: 36px; height: 36px; font-size: 0.9rem; }
-      .theme-title { font-size: 0.85rem; }
-      .theme-badge { font-size: 0.6rem; padding: 2px 8px; }
-      .rewards-section { padding: 10px 12px; }
-      .reward-item { padding: 4px 0; gap: 6px; }
-      .payment-engagement { font-size: 0.7rem; padding: 10px 8px; }
+      .chapter-item {
+        padding: 6px 10px;
+        gap: 8px;
+      }
+      .custom-cb {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        min-height: 24px;
+      }
+      .btn-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+      }
+      .theme-title {
+        font-size: 0.85rem;
+      }
+      .theme-badge {
+        font-size: 0.6rem;
+        padding: 2px 8px;
+      }
+      .rewards-section {
+        padding: 10px 12px;
+      }
+      .reward-item {
+        padding: 4px 0;
+        gap: 6px;
+      }
+      .payment-engagement {
+        font-size: 0.7rem;
+        padding: 10px 8px;
+      }
     }
 
-    .content, .header, .stats-row, .death-card, .rewards-section,
-    .add-card, .search-wrap, .filter-tabs, .theme-section,
+    .content,
+    .header,
+    .stats-row,
+    .death-card,
+    .rewards-section,
+    .add-card,
+    .search-wrap,
+    .filter-tabs,
+    .theme-section,
     .payment-engagement {
       max-width: 100%;
       overflow-wrap: break-word;
     }
 
-    .btn-icon, .custom-cb, .filter-tab, .add-toggle, .btn-add {
+    .btn-icon,
+    .custom-cb,
+    .filter-tab,
+    .add-toggle,
+    .btn-add {
       touch-action: manipulation;
     }
   </style>
 </head>
 <body>
 
-<div class="content">
+  <!-- ============================================================== -->
+  <!-- CONTENU PRINCIPAL                                             -->
+  <!-- ============================================================== -->
+  <div class="content">
 
-  <!-- HEADER -->
-  <header class="header">
-    <h1>Ma Révision Médicale</h1>
-    <div class="header-sub">Tableau de bord · 4ème année 2025/2026</div>
-  </header>
+    <!-- HEADER -->
+    <header class="header">
+      <h1>Ma Révision Médicale</h1>
+      <div class="header-sub">Tableau de bord · 4ème année 2025/2026</div>
+    </header>
 
-  <!-- MESSAGE QUOTIDIEN DE SOUTIEN POUR PISO -->
-  <div class="daily-message" id="dailyMessage">
-    <div class="daily-message-icon">💬</div>
-    <p id="dailyMessageText"></p>
-  </div>
-
-  <!-- STATS -->
-  <div class="stats-row">
-    <div class="stat-card total">
-      <div class="stat-num" id="statTotal">0</div>
-      <div class="stat-label">Total</div>
+    <!-- MESSAGE QUOTIDIEN -->
+    <div class="daily-message" id="dailyMessage">
+      <div class="daily-message-icon">💬</div>
+      <p id="dailyMessageText"></p>
     </div>
-    <div class="stat-card done">
-      <div class="stat-num" id="statDone">0</div>
-      <div class="stat-label">Révisés</div>
-    </div>
-    <div class="stat-card left">
-      <div class="stat-num" id="statLeft">0</div>
-      <div class="stat-label">Restants</div>
-    </div>
-  </div>
 
-  <!-- ANIMATION + TIMER -->
-  <div class="death-card">
-    <div id="deadline">
-      <svg preserveAspectRatio="none" id="line" viewBox="0 0 581 158" enable-background="new 0 0 581 158">
-        <!-- Piste -->
-        <g id="progress-trail">
-          <path fill="#E8D5C4" d="M491.979,83.878c1.215-0.73-0.62-5.404-3.229-11.044c-2.583-5.584-5.034-10.066-7.229-8.878 c-2.854,1.544-0.192,6.286,2.979,11.628C487.667,80.917,490.667,84.667,491.979,83.878z"/>
-          <path fill="#E8D5C4" d="M571,76v-5h-23.608c0.476-9.951-4.642-13.25-4.642-13.25l-3.125,4c0,0,3.726,2.7,3.625,5.125 c-0.071,1.714-2.711,3.18-4.962,4.125H517v5h10v24h-25v-5.666c0,0,0.839,0,2.839-0.667s6.172-3.667,4.005-6.333 s-7.49,0.333-9.656,0.166s-6.479-1.5-8.146,1.917c-1.551,3.178,0.791,5.25,5.541,6.083l-0.065,4.5H16c-2.761,0-5,2.238-5,5v17 c0,2.762,2.239,5,5,5h549c2.762,0,5-2.238,5-5v-17c0-2.762-2.238-5-5-5h-3V76H571z"/>
-          <path fill="#E8D5C4" d="M535,65.625c1.125,0.625,2.25-1.125,2.25-1.125l11.625-22.375c0,0,0.75-0.875-1.75-2.125 s-3.375,0.25-3.375,0.25s-8.75,21.625-9.875,23.5S533.875,65,535,65.625z"/>
-        </g>
-        <!-- Remplissage rouge -->
-        <g>
-          <defs>
-            <path id="SVGID_1_" d="M484.5,75.584c-3.172-5.342-5.833-10.084-2.979-11.628c2.195-1.188,4.646,3.294,7.229,8.878 c2.609,5.64,4.444,10.313,3.229,11.044C490.667,84.667,487.667,80.917,484.5,75.584z M571,76v-5h-23.608 c0.476-9.951-4.642-13.25-4.642-13.25l-3.125,4c0,0,3.726,2.7,3.625,5.125c-0.071,1.714-2.711,3.18-4.962,4.125H517v5h10v24h-25 v-5.666c0,0,0.839,0,2.839-0.667s6.172-3.667,4.005-6.333s-7.49,0.333-9.656,0.166s-6.479-1.5-8.146,1.917 c-1.551,3.178,0.791,5.25,5.541,6.083l-0.065,4.5H16c-2.761,0-5,2.238-5,5v17c0,2.762,2.239,5,5,5h549c2.762,0,5-2.238,5-5v-17 c0-2.762-2.238-5-5-5h-3V76H571z M535,65.625c1.125,0.625,2.25-1.125,2.25-1.125l11.625-22.375c0,0,0.75-0.875-1.75-2.125 s-3.375,0.25-3.375,0.25s-8.75,21.625-9.875,23.5S533.875,65,535,65.625z"/>
-          </defs>
-          <clipPath id="SVGID_2_">
-            <use xlink:href="#SVGID_1_" overflow="visible"/>
-          </clipPath>
-          <rect id="progress-time-fill" x="-100%" y="34" clip-path="url(#SVGID_2_)" fill="#E05A5A" width="586" height="103"/>
-        </g>
-        <!-- Personnage de la mort -->
-        <g id="death-group">
-          <path id="death" fill="#E05A5A" d="M-46.25,40.416c-5.42-0.281-8.349,3.17-13.25,3.918c-5.716,0.871-10.583-0.918-10.583-0.918 C-67.5,49-65.175,50.6-62.083,52c5.333,2.416,4.083,3.5,2.084,4.5c-16.5,4.833-15.417,27.917-15.417,27.917L-75.5,84.75 c-1,12.25-20.25,18.75-20.25,18.75s39.447,13.471,46.25-4.25c3.583-9.333-1.553-16.869-1.667-22.75 c-0.076-3.871,2.842-8.529,6.084-12.334c3.596-4.22,6.958-10.374,6.958-15.416C-38.125,43.186-39.833,40.75-46.25,40.416z M-40,51.959c-0.882,3.004-2.779,6.906-4.154,6.537s-0.939-4.32,0.112-7.704c0.82-2.64,2.672-5.96,3.959-5.583 C-39.005,45.523-39.073,48.8-40,51.959z"/>
-          <path id="death-arm" fill="#E05A5A" d="M-53.375,75.25c0,0,9.375,2.25,11.25,0.25s2.313-2.342,3.375-2.791 c1.083-0.459,4.375-1.75,4.292-4.75c-0.101-3.627,0.271-4.594,1.333-5.043c1.083-0.457,2.75-1.666,2.75-1.666 s0.708-0.291,0.5-0.875s-0.791-2.125-1.583-2.959c-0.792-0.832-2.375-1.874-2.917-1.332c-0.542,0.541-7.875,7.166-7.875,7.166 s-2.667,2.791-3.417,0.125S-49.833,61-49.833,61s-3.417,1.416-3.417,1.541s-1.25,5.834-1.25,5.834l-0.583,5.833L-53.375,75.25z"/>
-          <path id="death-tool" fill="#E05A5A" d="M-20.996,26.839l-42.819,91.475l1.812,0.848l38.342-81.909c0,0,8.833,2.643,12.412,7.414 c5,6.668,4.75,14.084,4.75,14.084s4.354-7.732,0.083-17.666C-10,32.75-19.647,28.676-19.647,28.676l0.463-0.988L-20.996,26.839z"/>
-        </g>
-        <!-- Designer -->
-        <path id="designer-body" fill="#D4788A" d="M514.75,100.334c0,0,1.25-16.834-6.75-16.5c-5.501,0.229-5.583,3-10.833,1.666 c-3.251-0.826-5.084-15.75-0.834-22c4.948-7.277,12.086-9.266,13.334-7.833c2.25,2.583-2,10.833-4.5,14.167 c-2.5,3.333-1.833,10.416,0.5,9.916s8.026-0.141,10,2.25c3.166,3.834,4.916,17.667,4.916,17.667l0.917,2.5l-4,0.167L514.75,100.334z"/>
-        <circle id="designer-head" fill="#D4788A" cx="516.083" cy="53.25" r="6.083"/>
-        <g id="designer-arm-grop">
-          <path id="designer-arm" fill="#D4788A" d="M505.875,64.875c0,0,5.875,7.5,13.042,6.791c6.419-0.635,11.833-2.791,13.458-4.041s2-3.5,0.25-3.875 s-11.375,5.125-16,3.25c-5.963-2.418-8.25-7.625-8.25-7.625l-2,1.125L505.875,64.875z"/>
-          <path id="designer-pen" fill="#D4788A" d="M525.75,59.084c0,0-0.423-0.262-0.969,0.088c-0.586,0.375-0.547,0.891-0.547,0.891l7.172,8.984l1.261,0.453 l-0.104-1.328L525.75,59.084z"/>
-        </g>
-        <!-- Repères de date -->
-        <line x1="98" y1="118" x2="98" y2="128" class="date-marker" />
-        <text x="98" y="142" class="date-label">1er Juil</text>
-        <line x1="190" y1="118" x2="190" y2="128" class="date-marker" />
-        <text x="190" y="142" class="date-label">15 Juil</text>
-        <line x1="283" y1="118" x2="283" y2="128" class="date-marker" />
-        <text x="283" y="142" class="date-label">1er Août</text>
-        <line x1="375" y1="118" x2="375" y2="128" class="date-marker" />
-        <text x="375" y="142" class="date-label">15 Août</text>
-        <line x1="467" y1="118" x2="467" y2="128" class="date-marker" />
-        <text x="467" y="142" class="date-label">31 Août</text>
-      </svg>
-      <div class="death-message" id="deathMessage">💀 Les récompenses sont parties !</div>
-      <div class="congrats-svg" id="congratsSvg">
-        🎉 Bravo Piso !<br>
-        <span class="sub">Tu as révisé tous les chapitres !</span>
+    <!-- STATISTIQUES -->
+    <div class="stats-row">
+      <div class="stat-card total">
+        <div class="stat-num" id="statTotal">0</div>
+        <div class="stat-label">Total</div>
+      </div>
+      <div class="stat-card done">
+        <div class="stat-num" id="statDone">0</div>
+        <div class="stat-label">Révisés</div>
+      </div>
+      <div class="stat-card left">
+        <div class="stat-num" id="statLeft">0</div>
+        <div class="stat-label">Restants</div>
       </div>
     </div>
-    <!-- Compteur -->
-    <div class="death-timer">
-      <div class="death-timer-grid">
-        <div class="death-timer-block">
-          <span class="death-timer-number" id="deathDays">00</span>
-          <span class="death-timer-label">Jours</span>
-        </div>
-        <div class="death-timer-block">
-          <span class="death-timer-number" id="deathHours">00</span>
-          <span class="death-timer-label">Heures</span>
-        </div>
-        <div class="death-timer-block">
-          <span class="death-timer-number" id="deathMinutes">00</span>
-          <span class="death-timer-label">Minutes</span>
-        </div>
-        <div class="death-timer-block">
-          <span class="death-timer-number" id="deathSeconds">00</span>
-          <span class="death-timer-label">Secondes</span>
+
+    <!-- TIMELINE + COUNTDOWN -->
+    <div class="death-card">
+      <div id="deadline">
+        <svg preserveAspectRatio="none" id="line" viewBox="0 0 581 158" enable-background="new 0 0 581 158">
+          <!-- Piste -->
+          <g id="progress-trail">
+            <path fill="#E8D5C4" d="M491.979,83.878c1.215-0.73-0.62-5.404-3.229-11.044c-2.583-5.584-5.034-10.066-7.229-8.878 c-2.854,1.544-0.192,6.286,2.979,11.628C487.667,80.917,490.667,84.667,491.979,83.878z" />
+            <path fill="#E8D5C4" d="M571,76v-5h-23.608c0.476-9.951-4.642-13.25-4.642-13.25l-3.125,4c0,0,3.726,2.7,3.625,5.125 c-0.071,1.714-2.711,3.18-4.962,4.125H517v5h10v24h-25v-5.666c0,0,0.839,0,2.839-0.667s6.172-3.667,4.005-6.333 s-7.49,0.333-9.656,0.166s-6.479-1.5-8.146,1.917c-1.551,3.178,0.791,5.25,5.541,6.083l-0.065,4.5H16c-2.761,0-5,2.238-5,5v17 c0,2.762,2.239,5,5,5h549c2.762,0,5-2.238,5-5v-17c0-2.762-2.238-5-5-5h-3V76H571z" />
+            <path fill="#E8D5C4" d="M535,65.625c1.125,0.625,2.25-1.125,2.25-1.125l11.625-22.375c0,0,0.75-0.875-1.75-2.125 s-3.375,0.25-3.375,0.25s-8.75,21.625-9.875,23.5S533.875,65,535,65.625z" />
+          </g>
+          <!-- Remplissage -->
+          <g>
+            <defs>
+              <path id="SVGID_1_" d="M484.5,75.584c-3.172-5.342-5.833-10.084-2.979-11.628c2.195-1.188,4.646,3.294,7.229,8.878 c2.609,5.64,4.444,10.313,3.229,11.044C490.667,84.667,487.667,80.917,484.5,75.584z M571,76v-5h-23.608 c0.476-9.951-4.642-13.25-4.642-13.25l-3.125,4c0,0,3.726,2.7,3.625,5.125c-0.071,1.714-2.711,3.18-4.962,4.125H517v5h10v24h-25 v-5.666c0,0,0.839,0,2.839-0.667s6.172-3.667,4.005-6.333s-7.49,0.333-9.656,0.166s-6.479-1.5-8.146,1.917 c-1.551,3.178,0.791,5.25,5.541,6.083l-0.065,4.5H16c-2.761,0-5,2.238-5,5v17c0,2.762,2.239,5,5,5h549c2.762,0,5-2.238,5-5v-17 c0-2.762-2.238-5-5-5h-3V76H571z M535,65.625c1.125,0.625,2.25-1.125,2.25-1.125l11.625-22.375c0,0,0.75-0.875-1.75-2.125 s-3.375,0.25-3.375,0.25s-8.75,21.625-9.875,23.5S533.875,65,535,65.625z" />
+            </defs>
+            <clipPath id="SVGID_2_">
+              <use xlink:href="#SVGID_1_" overflow="visible" />
+            </clipPath>
+            <rect id="progress-time-fill" x="-100%" y="34" clip-path="url(#SVGID_2_)" fill="#E05A5A" width="586" height="103" />
+          </g>
+          <!-- Personnage -->
+          <g id="death-group">
+            <path id="death" fill="#E05A5A" d="M-46.25,40.416c-5.42-0.281-8.349,3.17-13.25,3.918c-5.716,0.871-10.583-0.918-10.583-0.918 C-67.5,49-65.175,50.6-62.083,52c5.333,2.416,4.083,3.5,2.084,4.5c-16.5,4.833-15.417,27.917-15.417,27.917L-75.5,84.75 c-1,12.25-20.25,18.75-20.25,18.75s39.447,13.471,46.25-4.25c3.583-9.333-1.553-16.869-1.667-22.75 c-0.076-3.871,2.842-8.529,6.084-12.334c3.596-4.22,6.958-10.374,6.958-15.416C-38.125,43.186-39.833,40.75-46.25,40.416z M-40,51.959c-0.882,3.004-2.779,6.906-4.154,6.537s-0.939-4.32,0.112-7.704c0.82-2.64,2.672-5.96,3.959-5.583 C-39.005,45.523-39.073,48.8-40,51.959z" />
+            <path id="death-arm" fill="#E05A5A" d="M-53.375,75.25c0,0,9.375,2.25,11.25,0.25s2.313-2.342,3.375-2.791 c1.083-0.459,4.375-1.75,4.292-4.75c-0.101-3.627,0.271-4.594,1.333-5.043c1.083-0.457,2.75-1.666,2.75-1.666 s0.708-0.291,0.5-0.875s-0.791-2.125-1.583-2.959c-0.792-0.832-2.375-1.874-2.917-1.332c-0.542,0.541-7.875,7.166-7.875,7.166 s-2.667,2.791-3.417,0.125S-49.833,61-49.833,61s-3.417,1.416-3.417,1.541s-1.25,5.834-1.25,5.834l-0.583,5.833L-53.375,75.25z" />
+            <path id="death-tool" fill="#E05A5A" d="M-20.996,26.839l-42.819,91.475l1.812,0.848l38.342-81.909c0,0,8.833,2.643,12.412,7.414 c5,6.668,4.75,14.084,4.75,14.084s4.354-7.732,0.083-17.666C-10,32.75-19.647,28.676-19.647,28.676l0.463-0.988L-20.996,26.839z" />
+          </g>
+          <!-- Designer -->
+          <path id="designer-body" fill="#D4788A" d="M514.75,100.334c0,0,1.25-16.834-6.75-16.5c-5.501,0.229-5.583,3-10.833,1.666 c-3.251-0.826-5.084-15.75-0.834-22c4.948-7.277,12.086-9.266,13.334-7.833c2.25,2.583-2,10.833-4.5,14.167 c-2.5,3.333-1.833,10.416,0.5,9.916s8.026-0.141,10,2.25c3.166,3.834,4.916,17.667,4.916,17.667l0.917,2.5l-4,0.167L514.75,100.334z" />
+          <circle id="designer-head" fill="#D4788A" cx="516.083" cy="53.25" r="6.083" />
+          <g id="designer-arm-grop">
+            <path id="designer-arm" fill="#D4788A" d="M505.875,64.875c0,0,5.875,7.5,13.042,6.791c6.419-0.635,11.833-2.791,13.458-4.041s2-3.5,0.25-3.875 s-11.375,5.125-16,3.25c-5.963-2.418-8.25-7.625-8.25-7.625l-2,1.125L505.875,64.875z" />
+            <path id="designer-pen" fill="#D4788A" d="M525.75,59.084c0,0-0.423-0.262-0.969,0.088c-0.586,0.375-0.547,0.891-0.547,0.891l7.172,8.984l1.261,0.453 l-0.104-1.328L525.75,59.084z" />
+          </g>
+          <!-- Repères -->
+          <line x1="98" y1="118" x2="98" y2="128" class="date-marker" />
+          <text x="98" y="142" class="date-label">1er Juil</text>
+          <line x1="190" y1="118" x2="190" y2="128" class="date-marker" />
+          <text x="190" y="142" class="date-label">15 Juil</text>
+          <line x1="283" y1="118" x2="283" y2="128" class="date-marker" />
+          <text x="283" y="142" class="date-label">1er Août</text>
+          <line x1="375" y1="118" x2="375" y2="128" class="date-marker" />
+          <text x="375" y="142" class="date-label">15 Août</text>
+          <line x1="467" y1="118" x2="467" y2="128" class="date-marker" />
+          <text x="467" y="142" class="date-label">31 Août</text>
+        </svg>
+        <div class="death-message" id="deathMessage">💀 Les récompenses sont parties !</div>
+        <div class="congrats-svg" id="congratsSvg">
+          🎉 Bravo Piso !<br>
+          <span class="sub">Tu as révisé tous les chapitres !</span>
         </div>
       </div>
-      <div class="death-timer-message" id="deathTimerMessage">
-        avant la suppression de toutes les récompenses
+
+      <!-- COUNTDOWN -->
+      <div class="death-timer">
+        <div class="death-timer-grid">
+          <div class="death-timer-block">
+            <span class="death-timer-number" id="deathDays">00</span>
+            <span class="death-timer-label">Jours</span>
+          </div>
+          <div class="death-timer-block">
+            <span class="death-timer-number" id="deathHours">00</span>
+            <span class="death-timer-label">Heures</span>
+          </div>
+          <div class="death-timer-block">
+            <span class="death-timer-number" id="deathMinutes">00</span>
+            <span class="death-timer-label">Minutes</span>
+          </div>
+          <div class="death-timer-block">
+            <span class="death-timer-number" id="deathSeconds">00</span>
+            <span class="death-timer-label">Secondes</span>
+          </div>
+        </div>
+        <div class="death-timer-message" id="deathTimerMessage">
+          avant la suppression de toutes les récompenses
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- RÉCOMPENSES -->
-  <div class="rewards-section" id="rewardsSection">
-    <div class="rewards-title">
-      <span>Récompenses</span>
-      <span id="pointsDisplay">0.00 €</span>
-    </div>
-    <div id="rewardsList"></div>
-    <div id="lostMessageContainer"></div>
-    <div id="rewardsTotalLine" style="text-align:center; margin-top:6px; font-size:0.75rem; color:var(--muted);">
-      Potentiel total : <strong>100,00 €</strong> (répartition dynamique)
-    </div>
-  </div>
-
-  <!-- CONGRATS BANNER -->
-  <div class="congrats-banner" id="congratsBanner">
-    🎉 Bravo Piso ! Tu as révisé tous les chapitres !
-  </div>
-
-  <!-- AJOUTER UN CHAPITRE -->
-  <div class="add-card">
-    <div class="add-toggle" id="addToggle">
-      <div class="icon-wrap">+</div>
-      <span class="label">Ajouter un chapitre</span>
-      <span class="chevron">▼</span>
-    </div>
-    <div class="add-form" id="addForm">
-      <div class="field-group">
-        <div class="field-label">Nom du chapitre</div>
-        <input type="text" id="chapterName" placeholder="ex : Insuffisance cardiaque" />
+    <!-- RÉCOMPENSES -->
+    <div class="rewards-section" id="rewardsSection">
+      <div class="rewards-title">
+        <span>Récompenses</span>
+        <span id="pointsDisplay">0.00 €</span>
       </div>
-      <div class="field-group">
-        <div class="field-label">Thème / Spécialité</div>
-        <input type="text" id="chapterTheme" list="themeList" placeholder="ex : Cardiologie" />
-        <datalist id="themeList">
-          <!-- sera rempli dynamiquement -->
-        </datalist>
+      <div id="rewardsList"></div>
+      <div id="lostMessageContainer"></div>
+      <div id="rewardsTotalLine" style="text-align:center; margin-top:6px; font-size:0.75rem; color:var(--muted);">
+        Potentiel total : <strong>100,00 €</strong> (répartition dynamique)
       </div>
-      <button class="btn-add" id="addChapterBtn"><div class="icon-wrap">+</div> Ajouter le chapitre</button>
     </div>
-  </div>
 
-  <!-- GÉRER LES THÈMES -->
-  <div class="add-card">
-    <div class="add-toggle" id="themeToggle">
-      <div class="icon-wrap">➕</div>
-      <span class="label">Gérer les thèmes / spécialités</span>
-      <span class="chevron">▼</span>
+    <!-- BANNIÈRE DE FÉLICITATIONS -->
+    <div class="congrats-banner" id="congratsBanner">
+      🎉 Bravo Piso ! Tu as révisé tous les chapitres !
     </div>
-    <div class="add-form" id="themeForm">
-      <div class="field-group">
-        <div class="field-label">Nouveau thème</div>
-        <input type="text" id="newThemeName" placeholder="ex : Hématologie" />
+
+    <!-- AJOUTER UN CHAPITRE -->
+    <div class="add-card">
+      <div class="add-toggle" id="addToggle">
+        <div class="icon-wrap">+</div>
+        <span class="label">Ajouter un chapitre</span>
+        <span class="chevron">▼</span>
       </div>
-      <button class="btn-add" id="addThemeBtn">➕ Ajouter le thème</button>
-      <div id="themeListContainer" style="margin-top:8px; max-height:200px; overflow-y:auto;"></div>
+      <div class="add-form" id="addForm">
+        <div class="field-group">
+          <div class="field-label">Nom du chapitre</div>
+          <input type="text" id="chapterName" placeholder="ex : Insuffisance cardiaque" />
+        </div>
+        <div class="field-group">
+          <div class="field-label">Thème / Spécialité</div>
+          <input type="text" id="chapterTheme" list="themeList" placeholder="ex : Cardiologie" />
+          <datalist id="themeList"></datalist>
+        </div>
+        <button class="btn-add" id="addChapterBtn">➕ Ajouter le chapitre</button>
+      </div>
     </div>
-  </div>
 
-  <!-- SEARCH -->
-  <div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Rechercher un chapitre ou un thème…" />
-  </div>
-
-  <!-- FILTER TABS -->
-  <div class="filter-tabs">
-    <button class="filter-tab active" data-filter="all">Tous</button>
-    <button class="filter-tab" data-filter="todo">À réviser</button>
-    <button class="filter-tab" data-filter="done">Révisés</button>
-  </div>
-
-  <!-- LIST -->
-  <div id="chapterList"></div>
-
-  <!-- ENGAGEMENT -->
-  <div class="payment-engagement">
-    <div>
-      <span class="icon">📜</span>
-      <strong>Engagement de paiement</strong>
+    <!-- GÉRER LES THÈMES -->
+    <div class="add-card">
+      <div class="add-toggle" id="themeToggle">
+        <div class="icon-wrap">+</div>
+        <span class="label">Gérer les thèmes / spécialités</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="add-form" id="themeForm">
+        <div class="field-group">
+          <div class="field-label">Nouveau thème</div>
+          <input type="text" id="newThemeName" placeholder="ex : Hématologie" />
+        </div>
+        <button class="btn-add" id="addThemeBtn">➕ Ajouter le thème</button>
+        <div id="themeListContainer" style="margin-top:8px; max-height:200px; overflow-y:auto;"></div>
+      </div>
     </div>
-    <p style="margin-top: 4px;">
-      L’ensemble des gains cumulés (récompenses débloquées) sera versé à partir du <strong>mois de novembre 2026</strong>.
-    </p>
-    <div class="clause">
-      ⚠️ <span class="highlight">Clause de suppression :</span><br />
-      Si tous les chapitres ne sont pas révisés avant le <strong>31 août 2026 à 23h59</strong>,
-      <span class="highlight">toutes les récompenses obtenues seront définitivement supprimées</span>,
-      même celles déjà débloquées. Seul l’achèvement de l’intégralité des chapitres
-      permet de sécuriser les gains.
+
+    <!-- RECHERCHE -->
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Rechercher un chapitre ou un thème…" />
     </div>
+
+    <!-- FILTRES -->
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all">Tous</button>
+      <button class="filter-tab" data-filter="todo">À réviser</button>
+      <button class="filter-tab" data-filter="done">Révisés</button>
+    </div>
+
+    <!-- LISTE DES CHAPITRES -->
+    <div id="chapterList"></div>
+
+    <!-- ENGAGEMENT DE PAIEMENT -->
+    <div class="payment-engagement">
+      <div>
+        <span class="icon">📜</span>
+        <strong>Engagement de paiement</strong>
+      </div>
+      <p style="margin-top: 4px;">
+        L’ensemble des gains cumulés (récompenses débloquées) sera versé à partir du <strong>mois de novembre 2026</strong>.
+      </p>
+      <div class="clause">
+        ⚠️ <span class="highlight">Clause de suppression :</span><br />
+        Si tous les chapitres ne sont pas révisés avant le <strong>31 août 2026 à 23h59</strong>,
+        <span class="highlight">toutes les récompenses obtenues seront définitivement supprimées</span>,
+        même celles déjà débloquées. Seul l’achèvement de l’intégralité des chapitres
+        permet de sécuriser les gains.
+      </div>
+    </div>
+
   </div>
 
-</div>
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<script>
-  // ================================================================
-  // CONFIGURATION FIREBASE
-  // ================================================================
-  const firebaseConfig = {
-    apiKey: "AIzaSyBWhVrKgFLE0Y73FkI9sEo_an-cGRUQLWo",
-    authDomain: "bdsiterevisionmed4a.firebaseapp.com",
-    databaseURL: "https://bdsiterevisionmed4a-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "bdsiterevisionmed4a",
-    storageBucket: "bdsiterevisionmed4a.firebasestorage.app",
-    messagingSenderId: "353038021524",
-    appId: "1:353038021524:web:4209bb39afa4a75787d581",
-    measurementId: "G-VNJ82Z0270"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const dataRef = db.ref('/data');
-
-  // ================================================================
-  // MESSAGES DE SOUTIEN POUR PISO
-  // ================================================================
-  const MESSAGES_PISO = [
-    "Piso, chaque jour tu deviens plus forte. Continue d'avancer !",
-    "Rappelle-toi, Piso : tu es capable de grandes choses.",
-    "Ne doute pas de toi, Piso. Tu es bien plus brillante que tu ne le crois.",
-    "Piso, tes efforts d'aujourd'hui sont les victoires de demain.",
-    "Tu as déjà réussi tant de choses, Piso. Crois en toi !",
-    "Piso, n'oublie jamais que tu es unique et précieuse.",
-    "Chaque chapitre révisé est une preuve de ta détermination, Piso.",
-    "Piso, même les jours difficiles, tu es en train de construire ton avenir.",
-    "Fais-toi confiance, Piso. Tu sais plus de choses que tu ne le penses.",
-    "Piso, ta persévérance t'emmènera loin. Continue comme ça !",
-    "Ne te compare pas aux autres, Piso. Ton chemin est magnifique.",
-    "Piso, tu mérites toute la réussite qui t'attend. Garde le cap !",
-    "Les erreurs sont des leçons, Piso. Elles font de toi une future grande médecin.",
-    "Tu n'es pas seule, Piso. Nous croyons tous en toi.",
-    "Aujourd'hui est un nouveau jour pour briller, Piso. Tu as tout ce qu'il faut.",
-    "Piso, ta sensibilité est une force, pas une faiblesse.",
-    "Regarde tout le chemin parcouru, Piso. Tu progresses chaque jour.",
-    "Même les plus grands doutes n'arrêteront pas ta détermination, Piso.",
-    "Tu es une battante, Piso. N'abandonne jamais.",
-    "Piso, prends une grande inspiration et fonce. Tu vas y arriver !"
-  ];
-
-  function getMessageDuJour() {
-    const now = new Date();
-    const startOfYear = new Date(now.getFullYear(), 0, 0);
-    const diff = now - startOfYear;
-    const oneDay = 1000 * 60 * 60 * 24;
-    const dayOfYear = Math.floor(diff / oneDay);
-    const index = dayOfYear % MESSAGES_PISO.length;
-    return MESSAGES_PISO[index];
-  }
-
-  function afficherMessageQuotidien() {
-    const msg = getMessageDuJour();
-    document.getElementById('dailyMessageText').textContent = msg;
-  }
-  afficherMessageQuotidien();
-
-  // ================================================================
-  // CONSTANTES
-  // ================================================================
-  const DEADLINE = new Date('2026-08-31T23:59:59').getTime();
-  const START_DATE = new Date('2026-06-15T00:00:00').getTime();
-  const TOTAL_DURATION = DEADLINE - START_DATE;
-
-  // ================================================================
-  // ÉTAT LOCAL
-  // ================================================================
-  let chapters = [];
-  let themes = [];
-  let unlockedRewards = [];
-  let rewardsLost = false;
-
-  // ================================================================
-  // RÉFÉRENCES DOM
-  // ================================================================
-  const $ = id => document.getElementById(id);
-  const statTotal = $('statTotal');
-  const statDone = $('statDone');
-  const statLeft = $('statLeft');
-  const congratsBanner = $('congratsBanner');
-  const chapterList = $('chapterList');
-  const searchInput = $('searchInput');
-  const filterTabs = document.querySelectorAll('.filter-tab');
-  const addToggle = $('addToggle');
-  const addForm = $('addForm');
-  const addChapterBtn = $('addChapterBtn');
-  const chapterNameInput = $('chapterName');
-  const chapterThemeInput = $('chapterTheme');
-  const themeListDatalist = $('themeList');
-  const rewardsList = $('rewardsList');
-  const pointsDisplay = $('pointsDisplay');
-  const toast = $('toast');
-  const rewardsSection = $('rewardsSection');
-  const lostMessageContainer = $('lostMessageContainer');
-
-  const themeToggle = $('themeToggle');
-  const themeForm = $('themeForm');
-  const newThemeName = $('newThemeName');
-  const addThemeBtn = $('addThemeBtn');
-  const themeListContainer = $('themeListContainer');
-
-  const deathDays = $('deathDays');
-  const deathHours = $('deathHours');
-  const deathMinutes = $('deathMinutes');
-  const deathSeconds = $('deathSeconds');
-  const deathTimerMessage = $('deathTimerMessage');
-  const deathMessage = $('deathMessage');
-  const congratsSvg = $('congratsSvg');
-  const progressFill = $('progress-time-fill');
-  const deathGroup = $('death-group');
-
-  // ================================================================
-  // GÉNÉRATION DYNAMIQUE DES RÉCOMPENSES
-  // ================================================================
-  function isThemeComplete(chapters, theme) {
-    const themeChapters = chapters.filter(ch => ch.theme === theme);
-    if (themeChapters.length === 0) return false;
-    return themeChapters.every(ch => ch.done === true);
-  }
-
-  function getEmojiForTheme(theme) {
-    const map = {
-      "Dermatologie": "🧴",
-      "Maladie infectieuse": "🦠",
-      "Pneumologie": "🫁",
-      "Psychiatrie": "🧠",
-      "Rhumatologie": "🦴",
-      "Hématologie": "🩸",
-      "Endocrinologie": "🩺",
-      "Néphrologie": "🫘",
-      "Gastro-entérologie": "🍽️",
-      "Ophtalmologie": "👁️",
-      "ORL": "👂"
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT                                                    -->
+  <!-- ============================================================== -->
+  <script>
+    /* ================================================================
+       FIREBASE CONFIGURATION
+       ================================================================ */
+    const firebaseConfig = {
+      apiKey: "AIzaSyBWhVrKgFLE0Y73FkI9sEo_an-cGRUQLWo",
+      authDomain: "bdsiterevisionmed4a.firebaseapp.com",
+      databaseURL: "https://bdsiterevisionmed4a-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "bdsiterevisionmed4a",
+      storageBucket: "bdsiterevisionmed4a.firebasestorage.app",
+      messagingSenderId: "353038021524",
+      appId: "1:353038021524:web:4209bb39afa4a75787d581",
+      measurementId: "G-VNJ82Z0270"
     };
-    return map[theme] || "📌";
-  }
 
-  function generateRewards() {
-    const fixedThemes = ["Traumatologie", "Cardiologie", "Neurologie"];
-    const otherThemes = themes.filter(t => !fixedThemes.includes(t));
-    const otherCount = otherThemes.length;
-    const otherAmount = otherCount > 0 ? 25 / otherCount : 0;
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const dataRef = database.ref('/data');
 
-    const rewards = [];
+    /* ================================================================
+       CONSTANTES
+       ================================================================ */
+    const DEADLINE = new Date('2026-08-31T23:59:59').getTime();
+    const START_DATE = new Date('2026-06-15T00:00:00').getTime();
+    const TOTAL_DURATION = DEADLINE - START_DATE;
 
-    rewards.push({
-      id: "traumatologie",
-      condition: (ch) => isThemeComplete(ch, "Traumatologie"),
-      amount: 50,
-      label: "Traumatologie terminée",
-      emoji: "🦴"
-    });
+    /* ================================================================
+       MESSAGES QUOTIDIENS
+       ================================================================ */
+    const MOTIVATIONAL_MESSAGES = [
+      "Piso, chaque jour tu deviens plus forte. Continue d'avancer !",
+      "Rappelle-toi, Piso : tu es capable de grandes choses.",
+      "Ne doute pas de toi, Piso. Tu es bien plus brillante que tu ne le crois.",
+      "Piso, tes efforts d'aujourd'hui sont les victoires de demain.",
+      "Tu as déjà réussi tant de choses, Piso. Crois en toi !",
+      "Piso, n'oublie jamais que tu es unique et précieuse.",
+      "Chaque chapitre révisé est une preuve de ta détermination, Piso.",
+      "Piso, même les jours difficiles, tu es en train de construire ton avenir.",
+      "Fais-toi confiance, Piso. Tu sais plus de choses que tu ne le penses.",
+      "Piso, ta persévérance t'emmènera loin. Continue comme ça !",
+      "Ne te compare pas aux autres, Piso. Ton chemin est magnifique.",
+      "Piso, tu mérites toute la réussite qui t'attend. Garde le cap !",
+      "Les erreurs sont des leçons, Piso. Elles font de toi une future grande médecin.",
+      "Tu n'es pas seule, Piso. Nous croyons tous en toi.",
+      "Aujourd'hui est un nouveau jour pour briller, Piso. Tu as tout ce qu'il faut.",
+      "Piso, ta sensibilité est une force, pas une faiblesse.",
+      "Regarde tout le chemin parcouru, Piso. Tu progresses chaque jour.",
+      "Même les plus grands doutes n'arrêteront pas ta détermination, Piso.",
+      "Tu es une battante, Piso. N'abandonne jamais.",
+      "Piso, prends une grande inspiration et fonce. Tu vas y arriver !"
+    ];
 
-    rewards.push({
-      id: "cardioneuro",
-      condition: (ch) => isThemeComplete(ch, "Cardiologie") && isThemeComplete(ch, "Neurologie"),
-      amount: 25,
-      label: "Cardiologie + Neurologie terminées",
-      emoji: "❤️🧠"
-    });
+    function getDailyMessage() {
+      const now = new Date();
+      const startOfYear = new Date(now.getFullYear(), 0, 0);
+      const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+      return MOTIVATIONAL_MESSAGES[dayOfYear % MOTIVATIONAL_MESSAGES.length];
+    }
 
-    otherThemes.forEach(theme => {
+    function displayDailyMessage() {
+      document.getElementById('dailyMessageText').textContent = getDailyMessage();
+    }
+    displayDailyMessage();
+
+    /* ================================================================
+       ÉTAT DE L'APPLICATION
+       ================================================================ */
+    let chapters = [];
+    let themes = [];
+    let unlockedRewards = [];
+    let rewardsLost = false;
+
+    /* ================================================================
+       RÉFÉRENCES DOM
+       ================================================================ */
+    const $ = (id) => document.getElementById(id);
+
+    const elements = {
+      statTotal: $('statTotal'),
+      statDone: $('statDone'),
+      statLeft: $('statLeft'),
+      congratsBanner: $('congratsBanner'),
+      chapterList: $('chapterList'),
+      searchInput: $('searchInput'),
+      filterTabs: document.querySelectorAll('.filter-tab'),
+      addToggle: $('addToggle'),
+      addForm: $('addForm'),
+      addChapterBtn: $('addChapterBtn'),
+      chapterName: $('chapterName'),
+      chapterTheme: $('chapterTheme'),
+      themeListDatalist: $('themeList'),
+      rewardsList: $('rewardsList'),
+      pointsDisplay: $('pointsDisplay'),
+      toast: $('toast'),
+      rewardsSection: $('rewardsSection'),
+      lostMessageContainer: $('lostMessageContainer'),
+      themeToggle: $('themeToggle'),
+      themeForm: $('themeForm'),
+      newThemeName: $('newThemeName'),
+      addThemeBtn: $('addThemeBtn'),
+      themeListContainer: $('themeListContainer'),
+      deathDays: $('deathDays'),
+      deathHours: $('deathHours'),
+      deathMinutes: $('deathMinutes'),
+      deathSeconds: $('deathSeconds'),
+      deathTimerMessage: $('deathTimerMessage'),
+      deathMessage: $('deathMessage'),
+      congratsSvg: $('congratsSvg'),
+      progressFill: $('progress-time-fill'),
+      deathGroup: $('death-group')
+    };
+
+    /* ================================================================
+       FONCTIONS UTILITAIRES
+       ================================================================ */
+    function getDoneCount(arr) {
+      return arr.filter(ch => ch.done).length;
+    }
+
+    function showToast(message) {
+      const toast = elements.toast;
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    function getEmojiForTheme(theme) {
+      const map = {
+        "Dermatologie": "🧴",
+        "Maladie infectieuse": "🦠",
+        "Pneumologie": "🫁",
+        "Psychiatrie": "🧠",
+        "Rhumatologie": "🦴",
+        "Hématologie": "🩸",
+        "Endocrinologie": "🩺",
+        "Néphrologie": "🫘",
+        "Gastro-entérologie": "🍽️",
+        "Ophtalmologie": "👁️",
+        "ORL": "👂"
+      };
+      return map[theme] || "📌";
+    }
+
+    /* ================================================================
+       GESTION DES RÉCOMPENSES
+       ================================================================ */
+    function isThemeComplete(theme) {
+      const themeChapters = chapters.filter(ch => ch.theme === theme);
+      return themeChapters.length > 0 && themeChapters.every(ch => ch.done);
+    }
+
+    function generateRewards() {
+      const fixedThemes = ["Traumatologie", "Cardiologie", "Neurologie"];
+      const otherThemes = themes.filter(t => !fixedThemes.includes(t));
+      const otherAmount = otherThemes.length > 0 ? 25 / otherThemes.length : 0;
+
+      const rewards = [];
+
       rewards.push({
-        id: `other_${theme}`,
-        condition: (ch) => isThemeComplete(ch, theme),
-        amount: otherAmount,
-        label: `${theme} terminée`,
-        emoji: getEmojiForTheme(theme)
+        id: "traumatologie",
+        condition: () => isThemeComplete("Traumatologie"),
+        amount: 50,
+        label: "Traumatologie terminée",
+        emoji: "🦴"
       });
-    });
 
-    return rewards;
-  }
+      rewards.push({
+        id: "cardioneuro",
+        condition: () => isThemeComplete("Cardiologie") && isThemeComplete("Neurologie"),
+        amount: 25,
+        label: "Cardiologie + Neurologie terminées",
+        emoji: "❤️🧠"
+      });
 
-  // ================================================================
-  // FONCTIONS MÉTIER
-  // ================================================================
-  function getDoneCount(arr) { return arr.filter(ch => ch.done).length; }
+      otherThemes.forEach(theme => {
+        rewards.push({
+          id: `other_${theme}`,
+          condition: () => isThemeComplete(theme),
+          amount: otherAmount,
+          label: `${theme} terminée`,
+          emoji: getEmojiForTheme(theme)
+        });
+      });
 
-  function renderStats() {
-    const total = chapters.length;
-    const done = getDoneCount(chapters);
-    const left = total - done;
-    statTotal.textContent = total;
-    statDone.textContent = done;
-    statLeft.textContent = left;
-  }
+      return rewards;
+    }
 
-  function renderRewards() {
-    const rewards = generateRewards();
+    function renderRewards() {
+      const rewards = generateRewards();
 
-    if (rewardsLost) {
-      rewardsSection.classList.add('lost');
-      pointsDisplay.textContent = '💔 Perdues';
-      pointsDisplay.className = 'lost-badge';
-      lostMessageContainer.innerHTML = `
-        <div class="lost-message">
-          ⛔ Récompenses supprimées<br />
-          <span style="font-size:0.8rem;font-weight:400;">
-            La date limite (31 août 2026) a été dépassée sans que tous les chapitres ne soient révisés.
-            Toutes les récompenses ont été définitivement supprimées.
-          </span>
-        </div>
-      `;
-      let html = '';
-      rewards.forEach(r => {
-        html += `
+      if (rewardsLost) {
+        elements.rewardsSection.classList.add('lost');
+        elements.pointsDisplay.textContent = '💔 Perdues';
+        elements.pointsDisplay.className = 'lost-badge';
+        elements.lostMessageContainer.innerHTML = `
+          <div class="lost-message">
+            ⛔ Récompenses supprimées<br />
+            <span style="font-size:0.8rem;font-weight:400;">
+              La date limite (31 août 2026) a été dépassée sans que tous les chapitres ne soient révisés.
+              Toutes les récompenses ont été définitivement supprimées.
+            </span>
+          </div>
+        `;
+        elements.rewardsList.innerHTML = rewards.map(r => `
           <div class="reward-item">
             <div class="reward-badge lost">${r.emoji}</div>
             <div class="reward-info">
@@ -1615,448 +1721,476 @@
             </div>
             <div class="reward-status lost">💔 Supprimée</div>
           </div>
-        `;
+        `).join('');
+        return;
+      }
+
+      elements.rewardsSection.classList.remove('lost');
+      elements.pointsDisplay.className = '';
+      elements.lostMessageContainer.innerHTML = '';
+
+      // Détecter les nouvelles récompenses débloquées
+      const newlyUnlocked = [];
+      rewards.forEach(r => {
+        if (r.condition() && !unlockedRewards.includes(r.id)) {
+          unlockedRewards.push(r.id);
+          newlyUnlocked.push(r);
+          dataRef.child('unlockedRewards').set(unlockedRewards);
+        }
       });
-      rewardsList.innerHTML = html;
-      return;
+
+      // Nettoyer les IDs obsolètes
+      const validIds = rewards.map(r => r.id);
+      unlockedRewards = unlockedRewards.filter(id => validIds.includes(id));
+
+      // Calculer le total gagné
+      let totalEarned = 0;
+      rewards.forEach(r => {
+        if (unlockedRewards.includes(r.id)) {
+          totalEarned += r.amount;
+        }
+      });
+      elements.pointsDisplay.textContent = `${totalEarned.toFixed(2)} €`;
+
+      // Générer le HTML
+      elements.rewardsList.innerHTML = rewards.map(r => {
+        const unlocked = unlockedRewards.includes(r.id);
+        const badgeClass = unlocked ? 'unlocked' : 'locked';
+        const statusText = unlocked ? '✅ Débloqué' : '🔒 Verrouillé';
+        const statusClass = unlocked ? 'unlocked' : 'locked';
+        return `
+          <div class="reward-item">
+            <div class="reward-badge ${badgeClass}">${r.emoji}</div>
+            <div class="reward-info">
+              <div class="reward-amount">${r.amount.toFixed(2)} €</div>
+              <div class="reward-desc">${r.label}</div>
+            </div>
+            <div class="reward-status ${statusClass}">${statusText}</div>
+          </div>
+        `;
+      }).join('');
+
+      // Notifier les nouvelles récompenses
+      newlyUnlocked.forEach(r => {
+        showToast(`Félicitations Piso ! Tu as débloqué ${r.amount.toFixed(2)} € (${r.label}) !`);
+      });
     }
 
-    rewardsSection.classList.remove('lost');
-    pointsDisplay.className = '';
-    lostMessageContainer.innerHTML = '';
+    /* ================================================================
+       GESTION DES CHAPITRES
+       ================================================================ */
+    function toggleChapter(key) {
+      const chapter = chapters.find(ch => ch.key === key);
+      if (!chapter) return;
+      chapter.done = !chapter.done;
+      dataRef.child(key).update({ done: chapter.done });
+    }
 
-    const newlyUnlocked = [];
-    rewards.forEach(r => {
-      const isUnlocked = r.condition(chapters);
-      if (isUnlocked && !unlockedRewards.includes(r.id)) {
-        unlockedRewards.push(r.id);
-        newlyUnlocked.push(r);
-        dataRef.child('unlockedRewards').set(unlockedRewards);
+    function deleteChapter(key) {
+      dataRef.child(key).remove();
+    }
+
+    function editChapter(key) {
+      const chapter = chapters.find(ch => ch.key === key);
+      if (!chapter) return;
+
+      const newName = prompt('Nouveau nom :', chapter.name);
+      if (newName === null) return;
+      const trimmedName = newName.trim();
+      if (!trimmedName) return alert('Le nom ne peut pas être vide.');
+
+      const newTheme = prompt('Nouveau thème :', chapter.theme);
+      if (newTheme === null) return;
+      const trimmedTheme = newTheme.trim();
+      if (!trimmedTheme) return alert('Le thème ne peut pas être vide.');
+
+      // Ajouter le thème s'il n'existe pas encore
+      if (!themes.includes(trimmedTheme)) {
+        themes.push(trimmedTheme);
+        dataRef.child('themes').set(themes);
+        renderThemeManager();
       }
-    });
 
-    const validIds = rewards.map(r => r.id);
-    unlockedRewards = unlockedRewards.filter(id => validIds.includes(id));
+      dataRef.child(key).update({ name: trimmedName, theme: trimmedTheme });
+    }
 
-    let totalEarned = 0;
-    rewards.forEach(r => {
-      if (unlockedRewards.includes(r.id)) {
-        totalEarned += r.amount;
+    function addChapter(name, theme) {
+      if (!name.trim() || !theme.trim()) {
+        return alert('Veuillez remplir tous les champs.');
       }
-    });
-    pointsDisplay.textContent = `${totalEarned.toFixed(2)} €`;
+      const trimmedTheme = theme.trim();
 
-    let html = '';
-    rewards.forEach(r => {
-      const unlocked = unlockedRewards.includes(r.id);
-      const badgeClass = unlocked ? 'unlocked' : 'locked';
-      const statusText = unlocked ? '✅ Débloqué' : '🔒 Verrouillé';
-      const statusClass = unlocked ? 'unlocked' : 'locked';
-      html += `
-        <div class="reward-item">
-          <div class="reward-badge ${badgeClass}">${r.emoji}</div>
-          <div class="reward-info">
-            <div class="reward-amount">${r.amount.toFixed(2)} €</div>
-            <div class="reward-desc">${r.label}</div>
-          </div>
-          <div class="reward-status ${statusClass}">${statusText}</div>
+      if (!themes.includes(trimmedTheme)) {
+        themes.push(trimmedTheme);
+        dataRef.child('themes').set(themes);
+        renderThemeManager();
+      }
+
+      const newKey = dataRef.push().key;
+      const newChapter = { name: name.trim(), theme: trimmedTheme, done: false };
+      dataRef.child(newKey).set(newChapter);
+
+      elements.chapterName.value = '';
+      elements.chapterTheme.value = '';
+      elements.addForm.classList.remove('open');
+      elements.addToggle.classList.remove('open');
+    }
+
+    function renderList() {
+      const filter = document.querySelector('.filter-tab.active')?.dataset.filter || 'all';
+      const search = elements.searchInput.value.toLowerCase().trim();
+
+      let filtered = chapters;
+      if (filter === 'todo') filtered = filtered.filter(ch => !ch.done);
+      else if (filter === 'done') filtered = filtered.filter(ch => ch.done);
+
+      if (search) {
+        filtered = filtered.filter(ch => {
+          const name = ch.name ? ch.name.toLowerCase() : '';
+          const theme = ch.theme ? ch.theme.toLowerCase() : '';
+          return name.includes(search) || theme.includes(search);
+        });
+      }
+
+      // Grouper par thème
+      const groups = {};
+      filtered.forEach(ch => {
+        const theme = ch.theme || 'Sans thème';
+        if (!groups[theme]) groups[theme] = [];
+        groups[theme].push(ch);
+      });
+
+      // Générer le HTML
+      let html = '';
+      for (const [theme, items] of Object.entries(groups)) {
+        const doneCount = items.filter(i => i.done).length;
+        const totalCount = items.length;
+
+        let dotColor = '#D4788A';
+        const colorMap = {
+          'Cardiologie': '#E05A5A',
+          'Dermatologie': '#C4607A',
+          'Maladie infectieuse': '#F0A0B0',
+          'Neurologie': '#4CAF82',
+          'Pneumologie': '#E67E22',
+          'Psychiatrie': '#8E44AD',
+          'Rhumatologie': '#C0392B',
+          'Traumatologie': '#16A085'
+        };
+        if (colorMap[theme]) dotColor = colorMap[theme];
+
+        html += `
+          <div class="theme-section">
+            <div class="theme-header">
+              <div class="theme-dot" style="background:${dotColor}"></div>
+              <span class="theme-title">${theme}</span>
+              <span class="theme-badge">${doneCount}/${totalCount}</span>
+            </div>
+            <div class="theme-card">
+        `;
+
+        items.forEach(ch => {
+          const doneClass = ch.done ? 'is-done' : '';
+          const nameClass = ch.done ? 'done' : '';
+          const cbClass = ch.done ? 'checked' : '';
+          html += `
+            <div class="chapter-item ${doneClass}" data-key="${ch.key}">
+              <div class="custom-cb ${cbClass}" data-key="${ch.key}"></div>
+              <span class="chapter-name ${nameClass}">${ch.name || 'Sans nom'}</span>
+              <div class="btn-actions">
+                <button class="btn-icon edit" data-key="${ch.key}" title="Modifier">✏️</button>
+                <button class="btn-icon del" data-key="${ch.key}" title="Supprimer">🗑️</button>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `</div></div>`;
+      }
+
+      elements.chapterList.innerHTML = html || `
+        <div class="empty" style="text-align:center;padding:30px 10px;color:var(--muted);">
+          <div style="font-size:2rem;margin-bottom:8px;">📭</div>
+          <p style="font-size:0.85rem;">Aucun chapitre trouvé</p>
         </div>
       `;
-    });
-    rewardsList.innerHTML = html;
+      attachChapterEvents();
+    }
 
-    newlyUnlocked.forEach(r => {
-      showToast(`Félicitations Piso ! Tu as débloqué ${r.amount.toFixed(2)} € (${r.label}) !`);
-    });
-  }
+    function renderStats() {
+      const total = chapters.length;
+      const done = getDoneCount(chapters);
+      elements.statTotal.textContent = total;
+      elements.statDone.textContent = done;
+      elements.statLeft.textContent = total - done;
+    }
 
-  // ================================================================
-  // RENDER LIST (avec vérifications de sécurité)
-  // ================================================================
-  function renderList() {
-    const filter = document.querySelector('.filter-tab.active')?.dataset.filter || 'all';
-    const search = searchInput.value.toLowerCase().trim();
-    let filtered = chapters;
+    /* ================================================================
+       ÉVÉNEMENTS DES CHAPITRES
+       ================================================================ */
+    function attachChapterEvents() {
+      document.querySelectorAll('.custom-cb').forEach(el => {
+        el.addEventListener('click', function(e) {
+          e.stopPropagation();
+          toggleChapter(this.dataset.key);
+        });
+      });
 
-    if (filter === 'todo') filtered = filtered.filter(ch => !ch.done);
-    else if (filter === 'done') filtered = filtered.filter(ch => ch.done);
+      document.querySelectorAll('.btn-icon.del').forEach(el => {
+        el.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (confirm('Supprimer ce chapitre ?')) deleteChapter(this.dataset.key);
+        });
+      });
 
-    if (search) {
-      filtered = filtered.filter(ch => {
-        const name = ch.name ? ch.name.toLowerCase() : '';
-        const theme = ch.theme ? ch.theme.toLowerCase() : '';
-        return name.includes(search) || theme.includes(search);
+      document.querySelectorAll('.btn-icon.edit').forEach(el => {
+        el.addEventListener('click', function(e) {
+          e.stopPropagation();
+          editChapter(this.dataset.key);
+        });
       });
     }
 
-    const groups = {};
-    filtered.forEach(ch => {
-      const theme = ch.theme || 'Sans thème';
-      if (!groups[theme]) groups[theme] = [];
-      groups[theme].push(ch);
-    });
+    /* ================================================================
+       GESTION DES THÈMES
+       ================================================================ */
+    function addTheme(name) {
+      const trimmed = name.trim();
+      if (!trimmed) return;
+      if (themes.includes(trimmed)) {
+        showToast('Ce thème existe déjà.');
+        return;
+      }
+      themes.push(trimmed);
+      dataRef.child('themes').set(themes);
+      elements.newThemeName.value = '';
+      renderThemeManager();
+      renderRewards();
+      showToast(`Thème "${trimmed}" ajouté.`);
+    }
 
-    let html = '';
-    for (const [theme, items] of Object.entries(groups)) {
-      const doneCount = items.filter(i => i.done).length;
-      const totalCount = items.length;
-      let dotColor = '#D4788A';
-      if (theme === 'Cardiologie') dotColor = '#E05A5A';
-      else if (theme === 'Dermatologie') dotColor = '#C4607A';
-      else if (theme === 'Maladie infectieuse') dotColor = '#F0A0B0';
-      else if (theme === 'Neurologie') dotColor = '#4CAF82';
-      else if (theme === 'Pneumologie') dotColor = '#E67E22';
-      else if (theme === 'Psychiatrie') dotColor = '#8E44AD';
-      else if (theme === 'Rhumatologie') dotColor = '#C0392B';
-      else if (theme === 'Traumatologie') dotColor = '#16A085';
-      html += `
-        <div class="theme-section">
-          <div class="theme-header">
-            <div class="theme-dot" style="background:${dotColor}"></div>
-            <span class="theme-title">${theme}</span>
-            <span class="theme-badge">${doneCount}/${totalCount}</span>
-          </div>
-          <div class="theme-card">
-      `;
-      items.forEach(ch => {
-        const doneClass = ch.done ? 'is-done' : '';
-        const nameClass = ch.done ? 'done' : '';
-        const cbClass = ch.done ? 'checked' : '';
+    function deleteTheme(theme) {
+      if (!confirm(`Supprimer le thème "${theme}" ? Les chapitres associés ne seront pas effacés, mais la récompense disparaîtra.`)) return;
+      themes = themes.filter(t => t !== theme);
+      dataRef.child('themes').set(themes);
+      renderThemeManager();
+      renderRewards();
+    }
+
+    function renderThemeManager() {
+      let html = '';
+      themes.forEach(theme => {
         html += `
-          <div class="chapter-item ${doneClass}" data-key="${ch.key}">
-            <div class="custom-cb ${cbClass}" data-key="${ch.key}"></div>
-            <span class="chapter-name ${nameClass}">${ch.name || 'Sans nom'}</span>
-            <div class="btn-actions">
-              <button class="btn-icon edit" data-key="${ch.key}" title="Modifier">✏️</button>
-              <button class="btn-icon del" data-key="${ch.key}" title="Supprimer">🗑️</button>
+          <div class="theme-list-item">
+            <span class="theme-list-name">${theme}</span>
+            <div class="theme-list-actions">
+              <button class="btn-icon del" data-theme="${theme}" title="Supprimer le thème">🗑️</button>
             </div>
           </div>
         `;
       });
-      html += `</div></div>`;
-    }
-    chapterList.innerHTML = html || '<div class="empty" style="text-align:center;padding:30px 10px;color:var(--muted);"><div style="font-size:2rem;margin-bottom:8px;">📭</div><p style="font-size:0.85rem;">Aucun chapitre trouvé</p></div>';
-    attachEvents();
-  }
-
-  // ================================================================
-  // ÉVÉNEMENTS UI
-  // ================================================================
-  function attachEvents() {
-    document.querySelectorAll('.custom-cb').forEach(el => {
-      el.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const key = this.dataset.key;
-        toggleChapter(key);
-      });
-    });
-    document.querySelectorAll('.btn-icon.del').forEach(el => {
-      el.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const key = this.dataset.key;
-        if (confirm('Supprimer ce chapitre ?')) deleteChapter(key);
-      });
-    });
-    document.querySelectorAll('.btn-icon.edit').forEach(el => {
-      el.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const key = this.dataset.key;
-        editChapter(key);
-      });
-    });
-  }
-
-  function toggleChapter(key) {
-    const chapter = chapters.find(ch => ch.key === key);
-    if (!chapter) return;
-    chapter.done = !chapter.done;
-    const updates = {};
-    updates[`${key}/done`] = chapter.done;
-    dataRef.update(updates);
-  }
-
-  function deleteChapter(key) {
-    dataRef.child(key).remove();
-  }
-
-  function editChapter(key) {
-    const chapter = chapters.find(ch => ch.key === key);
-    if (!chapter) return;
-    const newName = prompt('Nouveau nom :', chapter.name);
-    if (newName === null) return;
-    const trimmed = newName.trim();
-    if (!trimmed) return alert('Le nom ne peut pas être vide.');
-    const newTheme = prompt('Nouveau thème :', chapter.theme);
-    if (newTheme === null) return;
-    const trimmedTheme = newTheme.trim();
-    if (!trimmedTheme) return alert('Le thème ne peut pas être vide.');
-    if (!themes.includes(trimmedTheme)) {
-      themes.push(trimmedTheme);
-      updateThemesListInDB();
-      renderThemeManager();
-    }
-    const updates = {};
-    updates[`${key}/name`] = trimmed;
-    updates[`${key}/theme`] = trimmedTheme;
-    dataRef.update(updates);
-  }
-
-  function addChapter(name, theme) {
-    if (!name.trim() || !theme.trim()) return alert('Veuillez remplir tous les champs.');
-    const trimmedTheme = theme.trim();
-    if (!themes.includes(trimmedTheme)) {
-      themes.push(trimmedTheme);
-      updateThemesListInDB();
-      renderThemeManager();
-    }
-    const newKey = dataRef.push().key;
-    const newChapter = { name: name.trim(), theme: trimmedTheme, done: false };
-    const update = {};
-    update[newKey] = newChapter;
-    dataRef.update(update);
-    chapterNameInput.value = '';
-    chapterThemeInput.value = '';
-    addForm.classList.remove('open');
-    addToggle.classList.remove('open');
-  }
-
-  function showToast(message) {
-    toast.textContent = message;
-    toast.classList.add('show');
-    clearTimeout(toast._timer);
-    toast._timer = setTimeout(() => {
-      toast.classList.remove('show');
-    }, 4000);
-  }
-
-  // ================================================================
-  // GESTION DES THÈMES
-  // ================================================================
-  function updateThemesListInDB() {
-    dataRef.child('themes').set(themes);
-  }
-
-  function addTheme(name) {
-    const trimmed = name.trim();
-    if (!trimmed) return;
-    if (themes.includes(trimmed)) {
-      showToast('Ce thème existe déjà.');
-      return;
-    }
-    themes.push(trimmed);
-    updateThemesListInDB();
-    newThemeName.value = '';
-    renderThemeManager();
-    renderRewards();
-    showToast(`Thème "${trimmed}" ajouté.`);
-  }
-
-  function deleteTheme(theme) {
-    if (!confirm(`Supprimer le thème "${theme}" ? Les chapitres associés ne seront pas effacés, mais la récompense disparaîtra.`)) return;
-    themes = themes.filter(t => t !== theme);
-    updateThemesListInDB();
-    renderThemeManager();
-    renderRewards();
-  }
-
-  function renderThemeManager() {
-    let html = '';
-    themes.forEach(theme => {
-      html += `
-        <div class="theme-list-item">
-          <span class="theme-list-name">${theme}</span>
-          <div class="theme-list-actions">
-            <button class="btn-icon del" data-theme="${theme}" title="Supprimer le thème">🗑️</button>
-          </div>
-        </div>
+      elements.themeListContainer.innerHTML = html || `
+        <div style="font-size:0.8rem; color:var(--muted); text-align:center;">Aucun thème personnalisé.</div>
       `;
-    });
-    themeListContainer.innerHTML = html || '<div style="font-size:0.8rem; color:var(--muted); text-align:center;">Aucun thème personnalisé.</div>';
 
-    document.querySelectorAll('.theme-list-actions .btn-icon.del').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const theme = btn.dataset.theme;
-        deleteTheme(theme);
+      document.querySelectorAll('.theme-list-actions .btn-icon.del').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteTheme(btn.dataset.theme);
+        });
       });
-    });
 
-    themeListDatalist.innerHTML = themes.map(t => `<option value="${t}" />`).join('');
-  }
-
-  // ================================================================
-  // UPDATE DEATH COUNTDOWN (CORRIGÉ)
-  // ================================================================
-  function updateDeathCountdown() {
-    const now = Date.now();
-    const diff = DEADLINE - now;
-    const total = chapters.length;
-    const done = getDoneCount(chapters);
-    const remaining = total - done;
-    const allDone = (total > 0 && remaining === 0);
-
-    if (diff <= 0) {
-      deathDays.textContent = '00';
-      deathHours.textContent = '00';
-      deathMinutes.textContent = '00';
-      deathSeconds.textContent = '00';
-      deathDays.className = 'death-timer-number zero';
-      deathHours.className = 'death-timer-number zero';
-      deathMinutes.className = 'death-timer-number zero';
-      deathSeconds.className = 'death-timer-number zero';
-      deathTimerMessage.innerHTML = '⏰ <span class="highlight">Temps écoulé !</span>';
-      deathMessage.classList.add('show');
-    } else {
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      deathDays.textContent = String(days).padStart(2, '0');
-      deathHours.textContent = String(hours).padStart(2, '0');
-      deathMinutes.textContent = String(minutes).padStart(2, '0');
-      deathSeconds.textContent = String(seconds).padStart(2, '0');
-      const isWarn = days < 7;
-      deathDays.className = 'death-timer-number' + (isWarn ? ' warn' : '');
-      deathHours.className = 'death-timer-number' + (isWarn ? ' warn' : '');
-      deathMinutes.className = 'death-timer-number' + (isWarn ? ' warn' : '');
-      deathSeconds.className = 'death-timer-number' + (isWarn ? ' warn' : '');
+      elements.themeListDatalist.innerHTML = themes.map(t => `<option value="${t}" />`).join('');
     }
 
-    if (allDone) {
-      deathGroup.classList.add('hidden');
-      congratsSvg.classList.add('show');
-      deathMessage.classList.remove('show');
-      deathTimerMessage.innerHTML = '✅ <span class="done">Objectif atteint !</span> Tous les chapitres sont révisés.';
-    } else if (diff <= 0) {
-      deathGroup.classList.remove('hidden');
-      congratsSvg.classList.remove('show');
-      deathMessage.classList.add('show');
-    } else {
-      deathGroup.classList.remove('hidden');
-      congratsSvg.classList.remove('show');
-      deathMessage.classList.remove('show');
+    /* ================================================================
+       COUNTDOWN ET TIMELINE
+       ================================================================ */
+    function updateDeathCountdown() {
+      const now = Date.now();
+      const diff = DEADLINE - now;
+      const total = chapters.length;
+      const done = getDoneCount(chapters);
+      const remaining = total - done;
+      const allDone = (total > 0 && remaining === 0);
 
-      let progress = 0;
-      if (now < START_DATE) {
-        progress = 0;
-      } else if (now > DEADLINE) {
-        progress = 100;
+      if (diff <= 0) {
+        elements.deathDays.textContent = '00';
+        elements.deathHours.textContent = '00';
+        elements.deathMinutes.textContent = '00';
+        elements.deathSeconds.textContent = '00';
+        elements.deathDays.className = 'death-timer-number zero';
+        elements.deathHours.className = 'death-timer-number zero';
+        elements.deathMinutes.className = 'death-timer-number zero';
+        elements.deathSeconds.className = 'death-timer-number zero';
+        elements.deathTimerMessage.innerHTML = '⏰ <span class="highlight">Temps écoulé !</span>';
+        elements.deathMessage.classList.add('show');
       } else {
-        const elapsed = now - START_DATE;
-        progress = (elapsed / TOTAL_DURATION) * 100;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        elements.deathDays.textContent = String(days).padStart(2, '0');
+        elements.deathHours.textContent = String(hours).padStart(2, '0');
+        elements.deathMinutes.textContent = String(minutes).padStart(2, '0');
+        elements.deathSeconds.textContent = String(seconds).padStart(2, '0');
+
+        const isWarn = days < 7;
+        const warnClass = isWarn ? ' warn' : '';
+        elements.deathDays.className = 'death-timer-number' + warnClass;
+        elements.deathHours.className = 'death-timer-number' + warnClass;
+        elements.deathMinutes.className = 'death-timer-number' + warnClass;
+        elements.deathSeconds.className = 'death-timer-number' + warnClass;
       }
-
-      const minX = -100;
-      const maxX = -3;
-      const xValue = minX + (progress / 100) * (maxX - minX);
-      progressFill.setAttribute('x', xValue + '%');
-
-      const minPos = 50;
-      const maxPos = 520;
-      const deathX = minPos + (progress / 100) * (maxPos - minPos);
-      deathGroup.style.transform = 'translateX(' + deathX + 'px)';
 
       if (allDone) {
-        congratsBanner.classList.add('show');
+        elements.deathGroup.classList.add('hidden');
+        elements.congratsSvg.classList.add('show');
+        elements.deathMessage.classList.remove('show');
+        elements.deathTimerMessage.innerHTML = '✅ <span class="done">Objectif atteint !</span> Tous les chapitres sont révisés.';
+      } else if (diff <= 0) {
+        elements.deathGroup.classList.remove('hidden');
+        elements.congratsSvg.classList.remove('show');
+        elements.deathMessage.classList.add('show');
       } else {
-        congratsBanner.classList.remove('show');
+        elements.deathGroup.classList.remove('hidden');
+        elements.congratsSvg.classList.remove('show');
+        elements.deathMessage.classList.remove('show');
+
+        let progress = 0;
+        if (now < START_DATE) {
+          progress = 0;
+        } else if (now > DEADLINE) {
+          progress = 100;
+        } else {
+          progress = ((now - START_DATE) / TOTAL_DURATION) * 100;
+        }
+
+        const minX = -100;
+        const maxX = -3;
+        elements.progressFill.setAttribute('x', (minX + (progress / 100) * (maxX - minX)) + '%');
+
+        const minPos = 50;
+        const maxPos = 520;
+        elements.deathGroup.style.transform = 'translateX(' + (minPos + (progress / 100) * (maxPos - minPos)) + 'px)';
+
+        if (allDone) {
+          elements.congratsBanner.classList.add('show');
+        } else {
+          elements.congratsBanner.classList.remove('show');
+        }
       }
     }
-  }
 
-  // ================================================================
-  // CHECK DEADLINE
-  // ================================================================
-  function checkDeadline() {
-    const now = Date.now();
-    const totalChapters = chapters.length;
-    const doneChapters = getDoneCount(chapters);
-    const allDone = (totalChapters > 0 && doneChapters === totalChapters);
-    if (now > DEADLINE && !allDone) {
-      if (!rewardsLost) {
+    /* ================================================================
+       VÉRIFICATION DE LA DATE LIMITE
+       ================================================================ */
+    function checkDeadline() {
+      const now = Date.now();
+      const total = chapters.length;
+      const done = getDoneCount(chapters);
+      const allDone = (total > 0 && done === total);
+
+      if (now > DEADLINE && !allDone && !rewardsLost) {
         rewardsLost = true;
         dataRef.child('rewardsLost').set(true);
         showToast('⏰ La date limite est dépassée. Toutes les récompenses sont supprimées.');
         updateDeathCountdown();
       }
     }
-  }
 
-  // ================================================================
-  // SYNCHRO FIREBASE AVEC GESTION D'ERREUR
-  // ================================================================
-  dataRef.on('value', (snapshot) => {
-    const data = snapshot.val() || {};
+    /* ================================================================
+       SYNCHRONISATION FIREBASE
+       ================================================================ */
+    dataRef.on('value', (snapshot) => {
+      const data = snapshot.val() || {};
 
-    const arr = Object.keys(data)
-      .filter(key => !['rewardsLost', 'themes', 'unlockedRewards'].includes(key))
-      .map(key => ({ key, ...data[key] }));
-    chapters = arr;
+      // Extraire les chapitres
+      const chapterKeys = Object.keys(data).filter(key =>
+        !['rewardsLost', 'themes', 'unlockedRewards'].includes(key)
+      );
+      chapters = chapterKeys.map(key => ({ key, ...data[key] }));
 
-    themes = data.themes || [];
-    const chapterThemes = [...new Set(chapters.map(ch => ch.theme))];
-    chapterThemes.forEach(ct => {
-      if (ct && !themes.includes(ct)) themes.push(ct);
-    });
-    const needUpdate = chapterThemes.some(ct => ct && !data.themes?.includes(ct));
-    if (needUpdate) {
-      dataRef.child('themes').set(themes);
-    }
+      // Synchroniser les thèmes
+      themes = data.themes || [];
+      const chapterThemes = [...new Set(chapters.map(ch => ch.theme))];
+      let needUpdate = false;
+      chapterThemes.forEach(ct => {
+        if (ct && !themes.includes(ct)) {
+          themes.push(ct);
+          needUpdate = true;
+        }
+      });
+      if (needUpdate) {
+        dataRef.child('themes').set(themes);
+      }
 
-    unlockedRewards = data.unlockedRewards || [];
-    rewardsLost = data.rewardsLost === true;
+      unlockedRewards = data.unlockedRewards || [];
+      rewardsLost = data.rewardsLost === true;
 
-    checkDeadline();
-    updateDeathCountdown();
-    renderStats();
-    renderRewards();
-    renderList();
-    renderThemeManager();
-  }, (error) => {
-    console.error('Erreur Firebase :', error);
-    showToast('Impossible de charger les données. Vérifie ta connexion et les règles de sécurité.');
-  });
-
-  // ================================================================
-  // INITIALISATION DES LISTENERS UI
-  // ================================================================
-  setInterval(updateDeathCountdown, 1000);
-
-  addToggle.addEventListener('click', () => {
-    addForm.classList.toggle('open');
-    addToggle.classList.toggle('open');
-  });
-
-  addChapterBtn.addEventListener('click', () => {
-    addChapter(chapterNameInput.value, chapterThemeInput.value);
-  });
-
-  chapterNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addChapterBtn.click(); });
-  chapterThemeInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addChapterBtn.click(); });
-
-  themeToggle.addEventListener('click', () => {
-    themeForm.classList.toggle('open');
-    themeToggle.classList.toggle('open');
-  });
-
-  addThemeBtn.addEventListener('click', () => {
-    addTheme(newThemeName.value);
-  });
-
-  newThemeName.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addThemeBtn.click();
-  });
-
-  filterTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      filterTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
+      checkDeadline();
+      updateDeathCountdown();
+      renderStats();
+      renderRewards();
       renderList();
+      renderThemeManager();
+    }, (error) => {
+      console.error('Erreur Firebase :', error);
+      showToast('Impossible de charger les données. Vérifie ta connexion et les règles de sécurité.');
     });
-  });
 
-  searchInput.addEventListener('input', renderList);
-</script>
+    /* ================================================================
+       INITIALISATION DES ÉVÉNEMENTS UI
+       ================================================================ */
+    // Mise à jour du compte toutes les secondes
+    setInterval(updateDeathCountdown, 1000);
+
+    // Toggle "Ajouter un chapitre"
+    elements.addToggle.addEventListener('click', () => {
+      elements.addForm.classList.toggle('open');
+      elements.addToggle.classList.toggle('open');
+    });
+
+    // Bouton Ajouter un chapitre
+    elements.addChapterBtn.addEventListener('click', () => {
+      addChapter(elements.chapterName.value, elements.chapterTheme.value);
+    });
+
+    // Touche Entrée dans les champs du chapitre
+    elements.chapterName.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') elements.addChapterBtn.click();
+    });
+    elements.chapterTheme.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') elements.addChapterBtn.click();
+    });
+
+    // Toggle "Gérer les thèmes"
+    elements.themeToggle.addEventListener('click', () => {
+      elements.themeForm.classList.toggle('open');
+      elements.themeToggle.classList.toggle('open');
+    });
+
+    // Bouton Ajouter un thème
+    elements.addThemeBtn.addEventListener('click', () => {
+      addTheme(elements.newThemeName.value);
+    });
+    elements.newThemeName.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') elements.addThemeBtn.click();
+    });
+
+    // Filtres
+    elements.filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        elements.filterTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        renderList();
+      });
+    });
+
+    // Recherche
+    elements.searchInput.addEventListener('input', renderList);
+  </script>
 
 </body>
 </html>
