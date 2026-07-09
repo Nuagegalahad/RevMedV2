@@ -1788,12 +1788,6 @@
       deathGroup.classList.remove('hidden');
       congratsSvg.classList.remove('show');
       deathMessage.classList.remove('show');
-      if (total > 0 && remaining > 0) {
-        deathTimerMessage.innerHTML = `⏳ ${remaining} chapitre${remaining > 1 ? 's' : ''} restant${remaining > 1 ? 's' : ''} avant la suppression de toutes les récompenses`;
-      } else {
-        deathTimerMessage.innerHTML = '⏳ avant la suppression de toutes les récompenses';
-      }
-    }
 
     let progress = 0;
     if (now < START_DATE) {
