@@ -1224,7 +1224,6 @@
 
   <!-- ANIMATION + TIMER -->
   <div class="death-card">
-    <!-- contenu conservé (identique à l'original) -->
     <div id="deadline">
       <svg preserveAspectRatio="none" id="line" viewBox="0 0 581 158" enable-background="new 0 0 581 158">
         <!-- Piste -->
@@ -1469,8 +1468,8 @@
   // ÉTAT LOCAL
   // ================================================================
   let chapters = [];
-  let themes = [];                 // liste des thèmes gérés
-  let unlockedRewards = [];       // IDs des récompenses débloquées
+  let themes = [];
+  let unlockedRewards = [];
   let rewardsLost = false;
 
   // ================================================================
@@ -1496,14 +1495,12 @@
   const rewardsSection = $('rewardsSection');
   const lostMessageContainer = $('lostMessageContainer');
 
-  // Thèmes management
   const themeToggle = $('themeToggle');
   const themeForm = $('themeForm');
   const newThemeName = $('newThemeName');
   const addThemeBtn = $('addThemeBtn');
   const themeListContainer = $('themeListContainer');
 
-  // Timer
   const deathDays = $('deathDays');
   const deathHours = $('deathHours');
   const deathMinutes = $('deathMinutes');
@@ -1548,7 +1545,6 @@
 
     const rewards = [];
 
-    // Récompense Traumatologie (fixe 50€)
     rewards.push({
       id: "traumatologie",
       condition: (ch) => isThemeComplete(ch, "Traumatologie"),
@@ -1557,7 +1553,6 @@
       emoji: "🦴"
     });
 
-    // Récompense combinée Cardiologie + Neurologie (25€)
     rewards.push({
       id: "cardioneuro",
       condition: (ch) => isThemeComplete(ch, "Cardiologie") && isThemeComplete(ch, "Neurologie"),
@@ -1566,7 +1561,6 @@
       emoji: "❤️🧠"
     });
 
-    // Autres thèmes : chacun reçoit 25/N €
     otherThemes.forEach(theme => {
       rewards.push({
         id: `other_${theme}`,
@@ -1631,19 +1625,16 @@
     pointsDisplay.className = '';
     lostMessageContainer.innerHTML = '';
 
-    // Détection des nouveaux déblocages
     const newlyUnlocked = [];
     rewards.forEach(r => {
       const isUnlocked = r.condition(chapters);
       if (isUnlocked && !unlockedRewards.includes(r.id)) {
         unlockedRewards.push(r.id);
         newlyUnlocked.push(r);
-        // sauvegarde immédiate
         dataRef.child('unlockedRewards').set(unlockedRewards);
       }
     });
 
-    // Nettoyage des IDs qui n'existent plus (thème supprimé)
     const validIds = rewards.map(r => r.id);
     unlockedRewards = unlockedRewards.filter(id => validIds.includes(id));
 
@@ -1674,29 +1665,37 @@
     });
     rewardsList.innerHTML = html;
 
-    // Afficher les toasts pour les nouvelles récompenses
     newlyUnlocked.forEach(r => {
       showToast(`Félicitations Piso ! Tu as débloqué ${r.amount.toFixed(2)} € (${r.label}) !`);
     });
   }
 
+  // ================================================================
+  // RENDER LIST (avec vérifications de sécurité)
+  // ================================================================
   function renderList() {
     const filter = document.querySelector('.filter-tab.active')?.dataset.filter || 'all';
     const search = searchInput.value.toLowerCase().trim();
     let filtered = chapters;
+
     if (filter === 'todo') filtered = filtered.filter(ch => !ch.done);
     else if (filter === 'done') filtered = filtered.filter(ch => ch.done);
+
     if (search) {
-      filtered = filtered.filter(ch =>
-        ch.name.toLowerCase().includes(search) ||
-        ch.theme.toLowerCase().includes(search)
-      );
+      filtered = filtered.filter(ch => {
+        const name = ch.name ? ch.name.toLowerCase() : '';
+        const theme = ch.theme ? ch.theme.toLowerCase() : '';
+        return name.includes(search) || theme.includes(search);
+      });
     }
+
     const groups = {};
     filtered.forEach(ch => {
-      if (!groups[ch.theme]) groups[ch.theme] = [];
-      groups[ch.theme].push(ch);
+      const theme = ch.theme || 'Sans thème';
+      if (!groups[theme]) groups[theme] = [];
+      groups[theme].push(ch);
     });
+
     let html = '';
     for (const [theme, items] of Object.entries(groups)) {
       const doneCount = items.filter(i => i.done).length;
@@ -1726,7 +1725,7 @@
         html += `
           <div class="chapter-item ${doneClass}" data-key="${ch.key}">
             <div class="custom-cb ${cbClass}" data-key="${ch.key}"></div>
-            <span class="chapter-name ${nameClass}">${ch.name}</span>
+            <span class="chapter-name ${nameClass}">${ch.name || 'Sans nom'}</span>
             <div class="btn-actions">
               <button class="btn-icon edit" data-key="${ch.key}" title="Modifier">✏️</button>
               <button class="btn-icon del" data-key="${ch.key}" title="Supprimer">🗑️</button>
@@ -1740,156 +1739,8 @@
     attachEvents();
   }
 
-  function updateDeathCountdown() {
-    const now = Date.now();
-    const diff = DEADLINE - now;
-    const total = chapters.length;
-    const done = getDoneCount(chapters);
-    const remaining = total - done;
-    const allDone = (total > 0 && remaining === 0);
-
-    if (diff <= 0) {
-      deathDays.textContent = '00';
-      deathHours.textContent = '00';
-      deathMinutes.textContent = '00';
-      deathSeconds.textContent = '00';
-      deathDays.className = 'death-timer-number zero';
-      deathHours.className = 'death-timer-number zero';
-      deathMinutes.className = 'death-timer-number zero';
-      deathSeconds.className = 'death-timer-number zero';
-      deathTimerMessage.innerHTML = '⏰ <span class="highlight">Temps écoulé !</span>';
-      deathMessage.classList.add('show');
-    } else {
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      deathDays.textContent = String(days).padStart(2, '0');
-      deathHours.textContent = String(hours).padStart(2, '0');
-      deathMinutes.textContent = String(minutes).padStart(2, '0');
-      deathSeconds.textContent = String(seconds).padStart(2, '0');
-      const isWarn = days < 7;
-      deathDays.className = 'death-timer-number' + (isWarn ? ' warn' : '');
-      deathHours.className = 'death-timer-number' + (isWarn ? ' warn' : '');
-      deathMinutes.className = 'death-timer-number' + (isWarn ? ' warn' : '');
-      deathSeconds.className = 'death-timer-number' + (isWarn ? ' warn' : '');
-    }
-
-    if (allDone) {
-      deathGroup.classList.add('hidden');
-      congratsSvg.classList.add('show');
-      deathMessage.classList.remove('show');
-      deathTimerMessage.innerHTML = '✅ <span class="done">Objectif atteint !</span> Tous les chapitres sont révisés.';
-    } else if (diff <= 0) {
-      deathGroup.classList.remove('hidden');
-      congratsSvg.classList.remove('show');
-      deathMessage.classList.add('show');
-    } else {
-      deathGroup.classList.remove('hidden');
-      congratsSvg.classList.remove('show');
-      deathMessage.classList.remove('show');
-
-    let progress = 0;
-    if (now < START_DATE) {
-      progress = 0;
-    } else if (now > DEADLINE) {
-      progress = 100;
-    } else {
-      const elapsed = now - START_DATE;
-      progress = (elapsed / TOTAL_DURATION) * 100;
-    }
-
-    const minX = -100;
-    const maxX = -3;
-    const xValue = minX + (progress / 100) * (maxX - minX);
-    progressFill.setAttribute('x', xValue + '%');
-
-    const minPos = 50;
-    const maxPos = 520;
-    const deathX = minPos + (progress / 100) * (maxPos - minPos);
-    deathGroup.style.transform = 'translateX(' + deathX + 'px)';
-
-    if (allDone) {
-      congratsBanner.classList.add('show');
-    } else {
-      congratsBanner.classList.remove('show');
-    }
-  }
-
-  function checkDeadline() {
-    const now = Date.now();
-    const totalChapters = chapters.length;
-    const doneChapters = getDoneCount(chapters);
-    const allDone = (totalChapters > 0 && doneChapters === totalChapters);
-    if (now > DEADLINE && !allDone) {
-      if (!rewardsLost) {
-        rewardsLost = true;
-        dataRef.child('rewardsLost').set(true);
-        showToast('⏰ La date limite est dépassée. Toutes les récompenses sont supprimées.');
-        updateDeathCountdown();
-      }
-    }
-  }
-
   // ================================================================
-  // GESTION DES THÈMES (ajout / suppression)
-  // ================================================================
-  function updateThemesListInDB() {
-    dataRef.child('themes').set(themes);
-  }
-
-  function addTheme(name) {
-    const trimmed = name.trim();
-    if (!trimmed) return;
-    if (themes.includes(trimmed)) {
-      showToast('Ce thème existe déjà.');
-      return;
-    }
-    themes.push(trimmed);
-    updateThemesListInDB();
-    newThemeName.value = '';
-    renderThemeManager();
-    renderRewards(); // recalcul immédiat
-    showToast(`Thème "${trimmed}" ajouté.`);
-  }
-
-  function deleteTheme(theme) {
-    if (!confirm(`Supprimer le thème "${theme}" ? Les chapitres associés ne seront pas effacés, mais la récompense disparaîtra.`)) return;
-    themes = themes.filter(t => t !== theme);
-    updateThemesListInDB();
-    renderThemeManager();
-    renderRewards();
-  }
-
-  function renderThemeManager() {
-    let html = '';
-    themes.forEach(theme => {
-      html += `
-        <div class="theme-list-item">
-          <span class="theme-list-name">${theme}</span>
-          <div class="theme-list-actions">
-            <button class="btn-icon del" data-theme="${theme}" title="Supprimer le thème">🗑️</button>
-          </div>
-        </div>
-      `;
-    });
-    themeListContainer.innerHTML = html || '<div style="font-size:0.8rem; color:var(--muted); text-align:center;">Aucun thème personnalisé.</div>';
-
-    // Events de suppression
-    document.querySelectorAll('.theme-list-actions .btn-icon.del').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const theme = btn.dataset.theme;
-        deleteTheme(theme);
-      });
-    });
-
-    // Mettre à jour le datalist
-    themeListDatalist.innerHTML = themes.map(t => `<option value="${t}" />`).join('');
-  }
-
-  // ================================================================
-  // ÉVÉNEMENTS UI (chapitres, etc.)
+  // ÉVÉNEMENTS UI
   // ================================================================
   function attachEvents() {
     document.querySelectorAll('.custom-cb').forEach(el => {
@@ -1939,7 +1790,6 @@
     if (newTheme === null) return;
     const trimmedTheme = newTheme.trim();
     if (!trimmedTheme) return alert('Le thème ne peut pas être vide.');
-    // Si le thème n'existe pas encore, l'ajouter automatiquement
     if (!themes.includes(trimmedTheme)) {
       themes.push(trimmedTheme);
       updateThemesListInDB();
@@ -1954,7 +1804,6 @@
   function addChapter(name, theme) {
     if (!name.trim() || !theme.trim()) return alert('Veuillez remplir tous les champs.');
     const trimmedTheme = theme.trim();
-    // Ajouter le thème s'il n'existe pas
     if (!themes.includes(trimmedTheme)) {
       themes.push(trimmedTheme);
       updateThemesListInDB();
@@ -1981,34 +1830,180 @@
   }
 
   // ================================================================
-  // SYNCHRO FIREBASE
+  // GESTION DES THÈMES
+  // ================================================================
+  function updateThemesListInDB() {
+    dataRef.child('themes').set(themes);
+  }
+
+  function addTheme(name) {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    if (themes.includes(trimmed)) {
+      showToast('Ce thème existe déjà.');
+      return;
+    }
+    themes.push(trimmed);
+    updateThemesListInDB();
+    newThemeName.value = '';
+    renderThemeManager();
+    renderRewards();
+    showToast(`Thème "${trimmed}" ajouté.`);
+  }
+
+  function deleteTheme(theme) {
+    if (!confirm(`Supprimer le thème "${theme}" ? Les chapitres associés ne seront pas effacés, mais la récompense disparaîtra.`)) return;
+    themes = themes.filter(t => t !== theme);
+    updateThemesListInDB();
+    renderThemeManager();
+    renderRewards();
+  }
+
+  function renderThemeManager() {
+    let html = '';
+    themes.forEach(theme => {
+      html += `
+        <div class="theme-list-item">
+          <span class="theme-list-name">${theme}</span>
+          <div class="theme-list-actions">
+            <button class="btn-icon del" data-theme="${theme}" title="Supprimer le thème">🗑️</button>
+          </div>
+        </div>
+      `;
+    });
+    themeListContainer.innerHTML = html || '<div style="font-size:0.8rem; color:var(--muted); text-align:center;">Aucun thème personnalisé.</div>';
+
+    document.querySelectorAll('.theme-list-actions .btn-icon.del').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const theme = btn.dataset.theme;
+        deleteTheme(theme);
+      });
+    });
+
+    themeListDatalist.innerHTML = themes.map(t => `<option value="${t}" />`).join('');
+  }
+
+  // ================================================================
+  // UPDATE DEATH COUNTDOWN (CORRIGÉ)
+  // ================================================================
+  function updateDeathCountdown() {
+    const now = Date.now();
+    const diff = DEADLINE - now;
+    const total = chapters.length;
+    const done = getDoneCount(chapters);
+    const remaining = total - done;
+    const allDone = (total > 0 && remaining === 0);
+
+    if (diff <= 0) {
+      deathDays.textContent = '00';
+      deathHours.textContent = '00';
+      deathMinutes.textContent = '00';
+      deathSeconds.textContent = '00';
+      deathDays.className = 'death-timer-number zero';
+      deathHours.className = 'death-timer-number zero';
+      deathMinutes.className = 'death-timer-number zero';
+      deathSeconds.className = 'death-timer-number zero';
+      deathTimerMessage.innerHTML = '⏰ <span class="highlight">Temps écoulé !</span>';
+      deathMessage.classList.add('show');
+    } else {
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      deathDays.textContent = String(days).padStart(2, '0');
+      deathHours.textContent = String(hours).padStart(2, '0');
+      deathMinutes.textContent = String(minutes).padStart(2, '0');
+      deathSeconds.textContent = String(seconds).padStart(2, '0');
+      const isWarn = days < 7;
+      deathDays.className = 'death-timer-number' + (isWarn ? ' warn' : '');
+      deathHours.className = 'death-timer-number' + (isWarn ? ' warn' : '');
+      deathMinutes.className = 'death-timer-number' + (isWarn ? ' warn' : '');
+      deathSeconds.className = 'death-timer-number' + (isWarn ? ' warn' : '');
+    }
+
+    if (allDone) {
+      deathGroup.classList.add('hidden');
+      congratsSvg.classList.add('show');
+      deathMessage.classList.remove('show');
+      deathTimerMessage.innerHTML = '✅ <span class="done">Objectif atteint !</span> Tous les chapitres sont révisés.';
+    } else if (diff <= 0) {
+      deathGroup.classList.remove('hidden');
+      congratsSvg.classList.remove('show');
+      deathMessage.classList.add('show');
+    } else {
+      deathGroup.classList.remove('hidden');
+      congratsSvg.classList.remove('show');
+      deathMessage.classList.remove('show');
+
+      let progress = 0;
+      if (now < START_DATE) {
+        progress = 0;
+      } else if (now > DEADLINE) {
+        progress = 100;
+      } else {
+        const elapsed = now - START_DATE;
+        progress = (elapsed / TOTAL_DURATION) * 100;
+      }
+
+      const minX = -100;
+      const maxX = -3;
+      const xValue = minX + (progress / 100) * (maxX - minX);
+      progressFill.setAttribute('x', xValue + '%');
+
+      const minPos = 50;
+      const maxPos = 520;
+      const deathX = minPos + (progress / 100) * (maxPos - minPos);
+      deathGroup.style.transform = 'translateX(' + deathX + 'px)';
+
+      if (allDone) {
+        congratsBanner.classList.add('show');
+      } else {
+        congratsBanner.classList.remove('show');
+      }
+    }
+  }
+
+  // ================================================================
+  // CHECK DEADLINE
+  // ================================================================
+  function checkDeadline() {
+    const now = Date.now();
+    const totalChapters = chapters.length;
+    const doneChapters = getDoneCount(chapters);
+    const allDone = (totalChapters > 0 && doneChapters === totalChapters);
+    if (now > DEADLINE && !allDone) {
+      if (!rewardsLost) {
+        rewardsLost = true;
+        dataRef.child('rewardsLost').set(true);
+        showToast('⏰ La date limite est dépassée. Toutes les récompenses sont supprimées.');
+        updateDeathCountdown();
+      }
+    }
+  }
+
+  // ================================================================
+  // SYNCHRO FIREBASE AVEC GESTION D'ERREUR
   // ================================================================
   dataRef.on('value', (snapshot) => {
     const data = snapshot.val() || {};
 
-    // Extraire les chapitres (tout sauf les propriétés spéciales)
     const arr = Object.keys(data)
       .filter(key => !['rewardsLost', 'themes', 'unlockedRewards'].includes(key))
       .map(key => ({ key, ...data[key] }));
     chapters = arr;
 
-    // Thèmes
     themes = data.themes || [];
-    // S'assurer que les thèmes provenant des chapitres sont inclus
     const chapterThemes = [...new Set(chapters.map(ch => ch.theme))];
     chapterThemes.forEach(ct => {
-      if (!themes.includes(ct)) themes.push(ct);
+      if (ct && !themes.includes(ct)) themes.push(ct);
     });
-    // Ne pas écraser la DB à chaque fois, on met à jour si nécessaire
-    const needUpdate = chapterThemes.some(ct => !data.themes?.includes(ct));
+    const needUpdate = chapterThemes.some(ct => ct && !data.themes?.includes(ct));
     if (needUpdate) {
       dataRef.child('themes').set(themes);
     }
 
-    // Récompenses débloquées
     unlockedRewards = data.unlockedRewards || [];
-
-    // Récompenses perdues
     rewardsLost = data.rewardsLost === true;
 
     checkDeadline();
@@ -2017,10 +2012,13 @@
     renderRewards();
     renderList();
     renderThemeManager();
+  }, (error) => {
+    console.error('Erreur Firebase :', error);
+    showToast('Impossible de charger les données. Vérifie ta connexion et les règles de sécurité.');
   });
 
   // ================================================================
-  // INITIALISATION DES LISTENERS
+  // INITIALISATION DES LISTENERS UI
   // ================================================================
   setInterval(updateDeathCountdown, 1000);
 
@@ -2036,7 +2034,6 @@
   chapterNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addChapterBtn.click(); });
   chapterThemeInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addChapterBtn.click(); });
 
-  // Thèmes
   themeToggle.addEventListener('click', () => {
     themeForm.classList.toggle('open');
     themeToggle.classList.toggle('open');
