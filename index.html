@@ -1179,7 +1179,7 @@
     <p style="margin-top: 4px;">L’ensemble des gains cumulés (récompenses débloquées) sera versé à partir du <strong>mois de novembre 2026</strong>.</p>
     <div class="clause">
       ⚠️ <span class="highlight">Clause de suppression :</span><br />
-      Si tous les chapitres ne sont pas révisés avant le <strong>31 août 2026 à 23h59</strong>,
+      Si tous les chapitres ne sont pas révisés avant le <strong>14 septembre 2026 à 23h59</strong>,
       <span class="highlight">toutes les récompenses obtenues seront définitivement supprimées</span>,
       même celles déjà débloquées. Seul l’achèvement de l’intégralité des chapitres
       permet de sécuriser les gains.
@@ -1210,7 +1210,8 @@
   const database = firebase.database();
 
   // ===== CONSTANTES =====
-  const DEADLINE = new Date('2026-08-31T23:59:59').getTime();
+  // Nouvelle deadline : 14 septembre 2026 (deux semaines après le 31 août)
+  const DEADLINE = new Date('2026-09-14T23:59:59').getTime();
   const START_DATE = new Date('2026-06-15T00:00:00').getTime();
   const TOTAL_DURATION = DEADLINE - START_DATE;
 
@@ -1345,7 +1346,7 @@
         <div class="lost-message">
           ⛔ Récompenses supprimées<br />
           <span style="font-size:0.8rem;font-weight:400;">
-            La date limite (31 août 2026) a été dépassée sans que tous les chapitres ne soient révisés.
+            La date limite (14 septembre 2026) a été dépassée sans que tous les chapitres ne soient révisés.
             Toutes les récompenses ont été définitivement supprimées.
           </span>
         </div>
@@ -1523,7 +1524,8 @@
   // ===== CALENDRIER =====
   function buildCalendar() {
     const start = new Date(2026, 5, 15);
-    const end = new Date(2026, 7, 31);
+    // Nouvelle date de fin : 14 septembre 2026
+    const end = new Date(2026, 8, 14);
     const grid = elements.calendarGrid;
     const weekDays = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
     let html = '';
